@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="http://www.flowable.org/processdef">
+    <process id="call_activity" name="Process 1" isExecutable="true" flowable:candidateStarterUsers=""
+             flowable:candidateStarterGroups="">
+        <callActivity id="Activity_0khg9z1" name="Simple loop" calledElement="loop_simple"
+                      flowable:calledElementType="key"
+                      flowable:businessKey="test" flowable:idVariableName="" flowable:inheritVariables="false"
+                      flowable:inheritBusinessKey="false" flowable:useLocalScopeForOutParameters="false"
+                      flowable:fallbackToDefaultTenant="false" flowable:sameDeployment="false" flowable:async="false"
+                      flowable:completeAsync="false">
+            <extensionElements>
+                <flowable:out sourceExpression="${&#34;i&#34;}" target="act_i"/>
+            </extensionElements>
+            <incoming>Flow_00d8kaa</incoming>
+            <outgoing>Flow_0ruyzqc</outgoing>
+        </callActivity>
+        <startEvent id="Event_1ko5y93">
+            <outgoing>Flow_00d8kaa</outgoing>
+        </startEvent>
+        <sequenceFlow id="Flow_00d8kaa" sourceRef="Event_1ko5y93" targetRef="Activity_0khg9z1"/>
+        <sequenceFlow id="Flow_0ruyzqc" sourceRef="Activity_0khg9z1" targetRef="Event_0gzi8qo"/>
+        <endEvent id="Event_1cfvsu6">
+            <incoming>Flow_0k2y784</incoming>
+        </endEvent>
+        <sequenceFlow id="Flow_0k2y784" sourceRef="Event_0gzi8qo" targetRef="Event_1cfvsu6"/>
+        <intermediateCatchEvent id="Event_0gzi8qo" name="">
+            <incoming>Flow_0ruyzqc</incoming>
+            <outgoing>Flow_0k2y784</outgoing>
+            <timerEventDefinition>
+                <timeDuration xsi:type="tFormalExpression">PT1M</timeDuration>
+            </timerEventDefinition>
+        </intermediateCatchEvent>
+    </process>
+    <bpmndi:BPMNDiagram xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                        xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                        xmlns:di="http://www.omg.org/spec/DD/20100524/DI">
+        <bpmndi:BPMNPlane bpmnElement="call_activity">
+            <bpmndi:BPMNShape id="Activity_0i32j3r_di" bpmnElement="Activity_0khg9z1">
+                <dc:Bounds x="40" y="-210" width="100" height="80"/>
+                <bpmndi:BPMNLabel/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Event_1ko5y93_di" bpmnElement="Event_1ko5y93">
+                <dc:Bounds x="-78" y="-188" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Event_1cfvsu6_di" bpmnElement="Event_1cfvsu6">
+                <dc:Bounds x="342" y="-188" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="Event_0bjttr6_di" bpmnElement="Event_0gzi8qo">
+                <dc:Bounds x="222" y="-188" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="Flow_00d8kaa_di" bpmnElement="Flow_00d8kaa">
+                <di:waypoint x="-42" y="-170"/>
+                <di:waypoint x="40" y="-170"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_0ruyzqc_di" bpmnElement="Flow_0ruyzqc">
+                <di:waypoint x="140" y="-170"/>
+                <di:waypoint x="222" y="-170"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="Flow_0k2y784_di" bpmnElement="Flow_0k2y784">
+                <di:waypoint x="258" y="-170"/>
+                <di:waypoint x="342" y="-170"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>

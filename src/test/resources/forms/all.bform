@@ -1,0 +1,304 @@
+{
+  "components": [
+    {
+      "label": "=varToCatch",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0e7ugoa",
+        "columns": null
+      },
+      "id": "Field_0jvtmd4",
+      "key": "textfield_hg121f",
+      "description": "=varToCatch",
+      "disabled": false,
+      "readonly": true,
+      "defaultValue": "def",
+      "conditional": {
+        "hide": "=varToCatch"
+      },
+      "appearance": {
+        "prefixAdorner": "=varToCatch",
+        "suffixAdorner": "=varToCatch"
+      },
+      "validate": {
+        "required": true,
+        "minLength": "=varToCatch",
+        "maxLength": "=varToCatch",
+        "pattern": "deff",
+        "patternErrorMessage": "wertf"
+      },
+      "properties": {
+        "key1": "value"
+      }
+    },
+    {
+      "label": "=varToCatch",
+      "type": "textarea",
+      "layout": {
+        "row": "Row_1qfwkd9",
+        "columns": null
+      },
+      "id": "Field_1dmmyk4",
+      "key": "textarea_5lkfvq",
+      "description": "=varToCatch",
+      "defaultValue": "defd",
+      "disabled": true,
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "label": "Number",
+      "type": "number",
+      "layout": {
+        "row": "Row_0eimxdg",
+        "columns": null
+      },
+      "id": "Field_1gp7vd5",
+      "key": "number_c72wd3",
+      "increment": "4",
+      "decimalDigits": 2
+    },
+    {
+      "subtype": "datetime",
+      "dateLabel": "Date",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1gtsd51",
+        "columns": null
+      },
+      "id": "Field_0s5g4mq",
+      "key": "datetime_hleyji",
+      "timeLabel": "Time",
+      "timeSerializingFormat": "utc_offset",
+      "timeInterval": 15,
+      "use24h": true,
+      "disallowPassedDates": true,
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "computeOn": "change",
+      "type": "expression",
+      "layout": {
+        "row": "Row_0jgx0r4",
+        "columns": null
+      },
+      "id": "Field_1s1narq",
+      "key": "expression_occ6",
+      "expression": "=varToCatch",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "label": "=varToCatch",
+      "type": "filepicker",
+      "layout": {
+        "row": "Row_0vdd64v",
+        "columns": null
+      },
+      "id": "Field_0isi750",
+      "key": "filepicker_gzonxd",
+      "accept": "=varToCatch",
+      "readonly": "=varToCatch",
+      "multiple": "=varToCatch",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "label": "Checkbox",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1941xlq",
+        "columns": null
+      },
+      "id": "Field_1aksh1q",
+      "key": "checkbox_c8mz2",
+      "properties": {
+        "kr": "value"
+      },
+      "defaultValue": true
+    },
+    {
+      "label": "Checkbox group",
+      "type": "checklist",
+      "layout": {
+        "row": "Row_1evwm3r",
+        "columns": null
+      },
+      "id": "Field_063updu",
+      "key": "checklist_eiqu5x",
+      "valuesExpression": "=varToCatch",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "label": "Radio group",
+      "type": "radio",
+      "layout": {
+        "row": "Row_1297dv3",
+        "columns": null
+      },
+      "id": "Field_1kjpn5h",
+      "key": "radio_rhfp4b",
+      "valuesExpression": "=varToCatch",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "label": "Select",
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "type": "select",
+      "layout": {
+        "row": "Row_1445q4p",
+        "columns": null
+      },
+      "id": "Field_1bxm2zl",
+      "key": "select_x9n2n",
+      "searchable": true
+    },
+    {
+      "height": 60,
+      "type": "spacer",
+      "layout": {
+        "row": "Row_0xbtxdz",
+        "columns": null
+      },
+      "id": "Field_04mx5kn"
+    },
+    {
+      "label": "Tag list",
+      "values": [
+        {
+          "label": "Value",
+          "value": "value"
+        }
+      ],
+      "type": "taglist",
+      "layout": {
+        "row": "Row_0xbtxdz",
+        "columns": null
+      },
+      "id": "Field_19e2eb9",
+      "key": "taglist_qk5z1u"
+    },
+    {
+      "label": "Dynamic list",
+      "components": [],
+      "showOutline": true,
+      "isRepeating": true,
+      "allowAddRemove": true,
+      "defaultRepetitions": 1,
+      "type": "dynamiclist",
+      "layout": {
+        "row": "Row_12xn5wi",
+        "columns": null
+      },
+      "id": "Field_09zusda",
+      "path": "varToCatch"
+    },
+    {
+      "label": "Button",
+      "action": "submit",
+      "type": "button",
+      "layout": {
+        "row": "Row_12xn5wi",
+        "columns": null
+      },
+      "id": "Field_029m1zq"
+    },
+    {
+      "label": "=varToCatch",
+      "security": {
+        "allowScripts": true
+      },
+      "type": "iframe",
+      "layout": {
+        "row": "Row_12xn5wi",
+        "columns": null
+      },
+      "id": "Field_0se4x7k",
+      "url": "=varToCatch"
+    },
+    {
+      "type": "separator",
+      "layout": {
+        "row": "Row_12xn5wi",
+        "columns": null
+      },
+      "id": "Field_0wpk01d"
+    },
+    {
+      "label": "=varToCatch",
+      "type": "documentPreview",
+      "layout": {
+        "row": "Row_12xn5wi",
+        "columns": null
+      },
+      "id": "Field_1nbufqd",
+      "dataSource": "=varToCatch"
+    },
+    {
+      "label": "=varToCatch",
+      "components": [],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_0cygrx9",
+        "columns": null
+      },
+      "id": "Field_15ty8zz",
+      "path": "varToCatch2"
+    },
+    {
+      "content": "=varToCatch",
+      "type": "html",
+      "layout": {
+        "row": "Row_0cygrx9",
+        "columns": null
+      },
+      "id": "Field_0jo3y5j",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    },
+    {
+      "type": "image",
+      "layout": {
+        "row": "Row_0cygrx9",
+        "columns": null
+      },
+      "id": "Field_1wn3a35",
+      "source": "=varToCatch",
+      "alt": "=varToCatch"
+    },
+    {
+      "type": "table",
+      "layout": {
+        "row": "Row_08wm23v",
+        "columns": null
+      },
+      "label": "=varToCatch",
+      "rowCount": 10,
+      "id": "Field_1bqgya8",
+      "dataSource": "=varToCatch",
+      "columnsExpression": "=varToCatch",
+      "conditional": {
+        "hide": "=varToCatch"
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0ct0lgl",
+  "schemaVersion": 19
+}

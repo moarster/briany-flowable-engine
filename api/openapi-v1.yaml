@@ -1,0 +1,1551 @@
+openapi: 3.0.0
+info:
+  title: Briany BPM API
+  version: 2.0.0
+  description: |
+    REST API for a Flowable-based BPM platform.
+
+    The target contract after the REST redesign. The spec deliberately separates four
+    audiences:
+    - **public** - business and workflow operations for client applications;
+    - **admin** - operator and observability endpoints;
+    - **internal** - dev/debug tooling, not for external clients;
+    - **testing** - e2e and destructive test utilities.
+
+    All list endpoints return paginated results in a unified `PagedResponse` shape
+    (`page`, `pageSize`, `totalElements`, `totalPages`, `hasNext`, `hasPrevious`).
+
+    Authentication is HTTP Basic (Flowable IDM) or Bearer JWT (JWKS) - see the
+    Security section.
+
+  contact:
+    email: ivan@moarse.ru
+    name: Ivan Donchenko
+  license:
+    name: ''
+servers:
+  - url: 'http://10.6.18.196:8095'
+    description: Developer Stand
+security:
+  - BasicAuth: []
+  - BearerAuth: []
+tags:
+  - name: Application
+    description: 'Manages workflow applications. An application bundles related process definitions, forms, and resources into one workspace.'
+    x-audience: public
+    x-implemented: true
+  - name: ProcessDefinition
+    description: 'Catalog of process definitions. A process definition is a BPMN model describing a business process; it can have multiple versions.'
+    x-audience: public
+    x-implemented: true
+  - name: ProcessInstance
+    description: Query and start process instances. A process instance is one concrete execution of a process definition.
+    x-audience: public
+    x-implemented: true
+  - name: Form
+    description: Catalog of forms. Forms describe the user interface for tasks and start events.
+    x-audience: public
+    x-implemented: true
+paths:
+  /api/v1/applications:
+    get:
+      tags:
+        - Application
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/AppDefinitionsController
+      operationId: listApplications
+      summary: List applications (latest versions)
+      description: |
+        Returns a paginated list of workflow applications.
+        Only the latest version of each application key is returned.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Page of applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+    post:
+      tags:
+        - Application
+      x-audience: public
+      x-controller-replaces:
+        - deployment/DeploymentController
+      operationId: deployApplication
+      summary: Deploys an application from a ZIP archive
+      description: |
+        Uploads a ZIP archive containing BPMN, DMN, bform, and other resources.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: ZIP archive containing bpmn/dmn/app/bform files.
+      responses:
+        '201':
+          description: Application deployed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/applications/versions:
+    get:
+      tags:
+        - Application
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/AppDefinitionsController
+      operationId: listApplicationsVersions
+      summary: List applications (all versions)
+      description: |
+        Returns a paginated list of workflow applications across all deployed versions.
+        Each version is returned as a separate entry.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Page of applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+  '/api/v1/applications/{key}':
+    get:
+      tags:
+        - Application
+      x-audience: public
+      x-controller-replaces:
+        - work/AppDefinitionsController
+      operationId: getApplication
+      summary: Get application by key (latest version)
+      description: |
+        Returns a workflow application by its id or key.
+        If multiple versions are deployed, only the latest is returned.
+        Use `getApplicationVersion` for a specific version.
+      responses:
+        '200':
+          description: Application data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/applications/{key}/versions':
+    get:
+      tags:
+        - Application
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/AppDefinitionsController
+      operationId: listApplicationVersions
+      summary: Get application by key (all versions)
+      description: |
+        Returns all versions of an application by key or id.
+        Unlike `getApplication`, not limited to the latest version.
+      responses:
+        '200':
+          description: Page of application versions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/applications/{key}/versions/{version}':
+    get:
+      tags:
+        - Application
+      x-audience: public
+      x-controller-replaces:
+        - work/AppDefinitionsController
+      operationId: getApplicationVersion
+      summary: Get application by id or key (specific version)
+      description: |
+        Returns a specific application version by key or id and version number.
+      responses:
+        '200':
+          description: Application data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Version'
+  /api/v1/processes:
+    get:
+      tags:
+        - ProcessDefinition
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/ProcessDefinitionsController
+      x-with-principal: true
+      operationId: listProcesses
+      summary: List process definitions (latest versions)
+      description: |
+        Returns a paginated list of all process definitions.
+        By default only the latest version of each definition is returned.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Page of process definitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinitionPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/v1/processes/versions:
+    get:
+      tags:
+        - ProcessDefinition
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/ProcessDefinitionsController
+      operationId: listProcessDefinitionsVersions
+      summary: List process definitions (all versions)
+      description: |
+        Returns all versions of all process definitions, including superseded ones.
+        Unlike `listProcessDefinitions`, not limited to the latest version per key.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Page of process definitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinitionPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  '/api/v1/processes/{key}':
+    get:
+      tags:
+        - ProcessDefinition
+      x-audience: public
+      x-controller-replaces:
+        - work/ProcessDefinitionsController
+      x-with-principal: true
+      operationId: getProcess
+      summary: Get process definition by key (latest version)
+      description: |
+        Returns the latest process definition for a key.
+      responses:
+        '200':
+          description: Process definition data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinition'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/processes/{key}/versions':
+    get:
+      tags:
+        - ProcessDefinition
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/ProcessDefinitionsController
+      x-with-principal: true
+      operationId: listProcessDefinitionVersions
+      summary: Get all versions of a process definition
+      description: |
+        Returns all versions of a process definition by key or id.
+        Unlike `getProcessDefinition`, not limited to the latest version.
+      responses:
+        '200':
+          description: Page of process definitions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinitionPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/processes/{key}/versions/{version}':
+    get:
+      tags:
+        - ProcessDefinition
+      x-audience: public
+      x-controller-replaces:
+        - work/ProcessDefinitionsController
+      x-with-principal: true
+      operationId: getProcessDefinitionVersion
+      summary: Get process definition by version
+      description: |
+        Returns a specific process definition version by key or id and version number.
+      responses:
+        '200':
+          description: Process definition data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDefinition'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Version'
+  '/api/v1/processes/{key}/process-instances':
+    get:
+      tags:
+        - ProcessInstance
+      x-spring-paginated: true
+      x-audience: public
+      x-controller-replaces:
+        - work/ProcessInstanceQueryController
+      x-with-principal: true
+      operationId: listProcessProcessInstances
+      summary: List instances of a process definition
+      description: |
+        Returns a paginated list of process instances started from the given process
+        definition (across all its versions).
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/ProcessInstanceState'
+      responses:
+        '200':
+          description: Page of process instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstancePage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/processes/{key}/versions/{version}/process-instances':
+    get:
+      tags:
+        - ProcessInstance
+      x-spring-paginated: true
+      x-audience: public
+      x-controller-replaces:
+        - work/ProcessInstanceQueryController
+      x-with-principal: true
+      operationId: listProcessDefinitionVersionInstances
+      summary: List instances of a single process definition version
+      description: |
+        Returns process instances for one specific definition version.
+        Unlike `listProcessDefinitionInstances`, filters only by the given version.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/ProcessInstanceState'
+      responses:
+        '200':
+          description: Page of process instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstancePage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Version'
+  /api/v1/process-instances:
+    get:
+      tags:
+        - ProcessInstance
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - work/ProcessInstanceQueryController
+      x-with-principal: true
+      operationId: listProcessInstances
+      summary: List process instances
+      description: |
+        Returns a paginated list of all process instances.
+        By default both active and completed instances are returned.
+      parameters:
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/ProcessInstanceState'
+      responses:
+        '200':
+          description: Page of process instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstancePage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  '/api/v1/process-instances/{id}':
+    get:
+      tags:
+        - ProcessInstances
+      x-audience: public
+      x-controller-replaces:
+        - work/ProcessInstanceQueryController
+      operationId: getProcessInstance
+      summary: Get process instance by id
+      responses:
+        '200':
+          description: Process instance data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessInstance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Process instance UUID
+        schema:
+          $ref: '#/components/schemas/UUID'
+  /api/v1/forms:
+    get:
+      tags:
+        - Form
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - forms/FormController
+      operationId: listForms
+      summary: List forms (latest versions)
+      description: |
+        Returns a paginated list of forms.
+        By default only the latest version of each form is returned.
+      parameters:
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: Page of forms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormSummaryPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  '/api/v1/forms/{key}':
+    get:
+      tags:
+        - Form
+      x-audience: public
+      x-controller-replaces:
+        - forms/FormController
+      operationId: getForm
+      summary: Get form by key (latest version)
+      description: |
+        Returns a form by its id or key.
+        If multiple versions are deployed, only the latest (highest version number) is
+        returned.
+        The form includes the full JSON schema (`schema`) and the list of variables
+        bound to it (`variables`).
+      responses:
+        '200':
+          description: Form data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/forms/{key}/versions':
+    get:
+      tags:
+        - Form
+      x-audience: public
+      x-spring-paginated: true
+      x-controller-replaces:
+        - forms/FormController
+      operationId: getFormVersions
+      summary: Get form by id or key (all versions)
+      description: |
+        Returns all versions of a form by key or id. Unlike `getForm`, not limited to the latest version.
+      responses:
+        '200':
+          description: Page of forms
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FormSummaryPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/forms/{key}/versions/{version}':
+    get:
+      tags:
+        - Form
+      x-audience: public
+      x-controller-replaces:
+        - forms/FormController
+      operationId: getFormVersion
+      summary: Get form by id or key (specific version)
+      description: |
+        Returns a specific form version by key or id and version number.
+      responses:
+        '200':
+          description: Form data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Version'
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: Checked against Flowable IDM (see FlowableAuthStrategy).
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer JWT validated against a JWKS endpoint (see JwksStrategy).
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    SizeParam:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 500
+        default: 25
+    SortParam:
+      name: sort
+      in: query
+      description: 'Sort criterion: field[,asc|desc]. Example: name,asc'
+      schema:
+        type: array
+        items:
+          type: string
+      style: form
+      explode: true
+    Key:
+      name: key
+      in: path
+      required: true
+      schema:
+        type: string
+      description: definition key
+    ProcessInstanceState:
+      name: state
+      in: query
+      schema:
+        enum:
+          - running
+          - completed
+          - suspended
+      description: |
+        Filters by process instance state. If omitted, all processes are returned.
+        - `running` - not yet finished (active and suspended)
+        - `completed` - finished
+    Version:
+      name: version
+      in: path
+      required: true
+      schema:
+        type: integer
+      description: Version identifier
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Authentication is required
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: Authenticated principal is not allowed to access the resource
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Resource not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: State conflict or business rule violation
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ServiceUnavailable:
+      description: Upstream dependency is unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    Problem:
+      type: object
+      required:
+        - detail
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ValidationError:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+    AppDefinition:
+      type: object
+      example:
+        id: 'app:12'
+        key: loans
+        version: 1
+        name: Loans Workspace
+        description: Loan workflow cockpit
+        icon: bank
+        theme: default
+      required:
+        - id
+        - key
+        - name
+        - version
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        version:
+          type: integer
+        resourceName:
+          type: string
+        deploymentId:
+          type: string
+    Application:
+      example:
+        id: 'app:12'
+        key: loans
+        version: 1
+        name: Loans Workspace
+        description: Loan workflow cockpit
+        icon: bank
+        theme: default
+      allOf:
+        - type: object
+          properties:
+            deployedResources:
+              type: object
+              properties:
+                processDefinitions:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ResourceRef'
+                bforms:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ResourceRef'
+        - $ref: '#/components/schemas/ApplicationRef'
+    ApplicationRef:
+      allOf:
+        - type: object
+          properties:
+            icon:
+              type: string
+            theme:
+              type: string
+            deploymentTime:
+              type: string
+              format: date-time
+        - $ref: '#/components/schemas/AppDefinition'
+    ApplicationPage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<ApplicationRef>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApplicationRef'
+        - $ref: '#/components/schemas/PagedResponse'
+    ProcessDefinition:
+      type: object
+      example:
+        id: 'orderProcess:7:4a0716d3'
+        key: orderProcess
+        name: Order Process
+        description: Order approval and fulfillment process
+        version: 7
+        category: workflow
+        deploymentId: dep-7741
+        hasStartForm: false
+      required:
+        - id
+        - key
+        - version
+        - deploymentId
+        - hasStartForm
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: integer
+        category:
+          type: string
+        deploymentId:
+          type: string
+        hasStartForm:
+          type: boolean
+          default: false
+    ProcessDefinitionPage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<ProcessDefinition>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProcessDefinition'
+        - $ref: '#/components/schemas/PagedResponse'
+    ResourceRef:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        name:
+          type: string
+        version:
+          type: integer
+      title: Short resource reference
+      description: 'Used in compact collection listings (bpmn, cmmn, dmn, bform)'
+    ProcessInstance:
+      type: object
+      example:
+        id: '2501'
+        name: Order
+        businessKey: ORD-2026-0001
+        state: running
+        startedAt: '2026-04-07T09:30:00Z'
+        startedBy: '1001'
+        processDefinition:
+          id: 'orderProcess:7:4a0716d3'
+          key: orderProcess
+          name: Order Process
+          version: 7
+        graphicalNotationDefined: true
+      required:
+        - id
+        - state
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        businessKey:
+          type: string
+        state:
+          $ref: '#/components/schemas/ProcessInstanceState'
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        startUserId:
+          type: string
+        durationInMillis:
+          type: integer
+          format: int64
+        processDefinition:
+          $ref: '#/components/schemas/ResourceRef'
+    ProcessInstancePage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<ProcessInstance>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProcessInstance'
+        - $ref: '#/components/schemas/PagedResponse'
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        groupIds:
+          type: array
+          items:
+            type: string
+      example:
+        id: '1002'
+        displayName: Ivan Petrov
+        groupIds:
+          - 'role:manager'
+          - 'subdiv:101791'
+    Task:
+      type: object
+      required:
+        - id
+        - state
+        - priority
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        state:
+          type: string
+          enum:
+            - active
+            - completed
+        assignee:
+          $ref: '#/components/schemas/User'
+        processInstanceId:
+          type: string
+        processDefinitionId:
+          type: string
+        caseInstanceId:
+          type: string
+        taskDefinitionKey:
+          type: string
+        formKey:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+        dueAt:
+          type: string
+          format: date-time
+        priority:
+          type: integer
+        processBusinessKey:
+          type: string
+      example:
+        id: '7741'
+        name: Approve Order
+        description: Manual approval for order
+        state: active
+        assignee:
+          id: '1001'
+          displayName: Ivan Petrov
+          groupIds:
+            - 'role:manager'
+        processInstanceId: '2501'
+        processDefinitionId: 'orderProcess:7:4a0716d3'
+        taskDefinitionKey: approveOrder
+        formKey: orderApproval
+        createdAt: '2026-04-07T09:35:00Z'
+        dueAt: '2026-04-08T09:35:00Z'
+        priority: 50
+        processBusinessKey: ORD-2026-0001
+    TaskPage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<Task>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+        - $ref: '#/components/schemas/PagedResponse'
+    FormSummary:
+      type: object
+      required:
+        - id
+        - formKey
+        - version
+        - deploymentId
+      properties:
+        id:
+          type: string
+          format: uuid
+        formKey:
+          type: string
+        name:
+          type: string
+        version:
+          type: integer
+        deploymentId:
+          type: string
+      example:
+        id: 5614ef25-33f9-49d8-b0fc-3e4e67269c0d
+        formKey: orderApproval
+        name: Order Approval
+        version: 4
+        deploymentId: dep-7741
+    FormSummaryPage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<FormSummary>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/FormSummary'
+        - $ref: '#/components/schemas/PagedResponse'
+    FormSchema:
+      type: object
+      description: |
+        Root object of a form schema (form-js format).
+      properties:
+        id:
+          type: string
+          description: |
+            Form key (form-js form id). Required at deploy time - used as the form
+            entity's key and for versioning: redeploying with the same id creates a
+            new version.
+        type:
+          type: string
+          default: default
+          description: form-js schema type. Currently always `default`.
+        components:
+          type: array
+          default: []
+          description: List of form components.
+          items:
+            $ref: '#/components/schemas/FormComponent'
+        schemaVersion:
+          type: integer
+          description: form-js schema format version, written by the editor on export.
+    FormComponent:
+      description: |
+        A single form component (form-js component).
+        Different component types use different fields.
+        For a detailed property reference, see the
+        [Camunda Forms element library](https://docs.camunda.io/docs/components/modeler/forms/form-element-library/forms-element-library/).
+      allOf:
+        - $ref: './components/schemas/InputUiComponent.yaml'
+        - type: object
+          required:
+            - label
+            - type
+          properties:
+            # --- Universal ---
+            id:
+              type: string
+              description: |
+                Unique component id within the schema. form-js requires it on every
+                component; the editor generates it automatically, or it can be set
+                manually.
+            type:
+              $ref: '#/components/schemas/FormComponentType'
+            layout:
+              type: object
+              description: |
+                form-js layout parameters (`row`, `columns`). The server does not use
+                this field; the structure is passed through to the client as-is.
+            conditional:
+              $ref: '#/components/schemas/FormComponentConditional'
+            properties:
+              type: object
+              additionalProperties:
+                type: string
+              description: Arbitrary user-defined component properties (key/value).
+            components:
+              type: array
+              description: |
+                Child components of container types (group, dynamiclist).
+                Unused by other component types.
+              items:
+                $ref: '#/components/schemas/FormComponent'
+            # --- Common input ---
+            disabled:
+              type: boolean
+              description: Component is disabled (not editable). Used during development.
+            readonly:
+              allOf:
+                - $ref: '#/components/schemas/BooleanOrExpression'
+              description: |
+                Read-only mode.
+            validate:
+              $ref: '#/components/schemas/FormComponentValidate'
+            appearance:
+              $ref: '#/components/schemas/FormComponentAppearance'
+            # --- number ---
+            increment:
+              type: string
+              description: Value step (for `number`).
+            decimalDigits:
+              type: integer
+              description: Maximum number of decimal digits (for `number`).
+            # --- datetime ---
+            subtype:
+              type: string
+              description: 'datetime component subtype - `date`, `time`, or `datetime`.'
+            dateLabel:
+              type: string
+              description: Label text for the date field. Plain text or a dynamic expression (FEEL / templating).
+            timeLabel:
+              type: string
+              description: Label text for the time field. Plain text or a dynamic expression (FEEL / templating).
+            timeSerializingFormat:
+              type: string
+              description: 'Time serialization format - `utc_offset`, `utc_normalized`, or `no_timezone`.'
+            timeInterval:
+              type: integer
+              description: Time picker step, in minutes.
+            use24h:
+              type: boolean
+              description: Use 24-hour time format.
+            disallowPassedDates:
+              type: boolean
+              description: Disallow selecting past dates.
+            # --- expression ---
+            expression:
+              type: string
+              description: 'FEEL expression computing the component value (for `expression`).'
+            computeOn:
+              type: string
+              description: When to evaluate the expression - change (on every form change) or presubmit (only before submit).
+            # --- filepicker ---
+            accept:
+              type: string
+              description: 'Comma-separated accepted file formats (MIME types or extensions, e.g. image/*, .pdf).'
+            multiple:
+              allOf:
+                - $ref: '#/components/schemas/BooleanOrExpression'
+              description: |
+                Allow selecting multiple files.
+            # --- select / checklist / radio / taglist ---
+            valuesExpression:
+              type: string
+              description: 'FEEL expression returning the list of options (dynamic source).'
+            searchable:
+              type: boolean
+              description: Allow keyboard search among options (for `select`).
+            # --- spacer ---
+            height:
+              type: integer
+              description: Vertical spacing height in pixels (for `spacer`).
+            # --- dynamiclist / group ---
+            showOutline:
+              type: boolean
+              description: Show a visual border around the group (for `group` and `dynamiclist`).
+            isRepeating:
+              type: boolean
+              description: 'Technical flag for the dynamic-list component, set by form-js on creation.'
+            allowAddRemove:
+              type: boolean
+              description: Allow adding and removing list items (for `dynamiclist`).
+            defaultRepetitions:
+              type: integer
+              description: 'Number of dynamic-list items shown on initial render.'
+            path:
+              type: string
+              description: |
+                The form data path under which child component values are stored.
+                A variable name ("address") or dot notation ("user.address"). Creates a
+                nested object for group, an array for dynamiclist. If unset on a group,
+                child fields live at the root.
+            # --- button ---
+            action:
+              type: string
+              description: Button action - `submit` or `reset`.
+            # --- iframe ---
+            url:
+              type: string
+              description: URL of the iframe content source. Plain text or a dynamic expression (FEEL / templating).
+            security:
+              $ref: '#/components/schemas/FormComponentSecurity'
+            # --- documentPreview / table ---
+            dataSource:
+              type: string
+              description: |
+                FEEL expression returning the data source.
+                For table - an array of record objects (one record = one table row);
+                for documentPreview - an array of objects with document metadata.
+            # --- text ---
+            text:
+              type: string
+              description: Text content (Markdown). Plain text or a dynamic expression (FEEL / templating).
+            # --- html ---
+            content:
+              type: string
+              description: HTML content. Allows templating or static HTML; sanitized on the client.
+            # --- image ---
+            source:
+              type: string
+              description: Image source. Plain text (URL/data URI) or a dynamic expression (FEEL / templating).
+            alt:
+              type: string
+              description: 'Alt text for the image (shown if the image fails to load).'
+            # --- table ---
+            rowCount:
+              type: integer
+              description: Table page size (used only when pagination is enabled).
+            columnsExpression:
+              type: string
+              description: 'FEEL expression returning the table column definitions.'
+    FormComponentConditional:
+      type: object
+      description: Conditional visibility of a component (form-js Conditional).
+      properties:
+        hide:
+          type: string
+          description: FEEL expression. The component is hidden when it evaluates to true.
+    FormComponentValidate:
+      type: object
+      description: Validation rules for input components (form-js Validation).
+      properties:
+        required:
+          type: boolean
+          description: Field must be filled in.
+        minLength:
+          type: string
+          description: Minimum value length. An integer (as a string) or a FEEL expression.
+        maxLength:
+          type: string
+          description: Maximum value length. An integer (as a string) or a FEEL expression.
+        pattern:
+          type: string
+          description: 'Regular expression the value must match.'
+        patternErrorMessage:
+          type: string
+          description: 'Error message shown when the value does not match pattern. Only meaningful if pattern is set.'
+    FormComponentAppearance:
+      type: object
+      description: Visual presentation of the value (form-js Appearance).
+      properties:
+        prefixAdorner:
+          type: string
+          description: |
+            Prefix shown before the value (e.g. a currency symbol).
+            Plain text or a dynamic expression (FEEL / templating).
+        suffixAdorner:
+          type: string
+          description: |
+            Suffix shown after the value (e.g. a unit of measure).
+            Plain text or a dynamic expression (FEEL / templating).
+    FormComponentSecurity:
+      type: object
+      description: 'Security settings for components that execute embedded code (iframe).'
+      properties:
+        allowScripts:
+          type: boolean
+          description: Allow scripts to run inside the iframe (HTML sandbox directive allow-scripts).
+    BooleanOrExpression:
+      oneOf:
+        - type: boolean
+        - type: string
+      description: |
+        A boolean value (`true`/`false`), or a FEEL expression as a string starting
+        with `=` (e.g. `=isAdmin`).
+    FormComponentType:
+      type: string
+      default: textfield
+      description: |
+        Form component type.
+        Allowed values:
+          - `textfield` - single-line text input
+          - `textarea` - multi-line text input
+          - `number` - numeric input
+          - `select` - dropdown (single choice, large option sets)
+          - `radio` - radio buttons (single choice, small option sets)
+          - `checklist` - checkboxes (multiple choice, small option sets)
+          - `checkbox` - single checkbox (boolean value)
+          - `date` - date picker
+          - `datetime` - date and/or time picker
+          - `group` - group of nested components
+          - `dynamiclist` - repeating list of nested components
+          - `expression` - computed field (FEEL expression)
+          - `iframe` - embedded external resource
+          - `image` - image display
+          - `filepicker` - file selection
+          - `separator` - horizontal divider line
+          - `spacer` - empty vertical space
+          - `table` - tabular data display
+          - `time` - time picker
+          - `html` - HTML block
+          - `button` - button (`submit` / `reset`)
+          - `documentPreview` - document preview
+          - `taglist` - tag selection (multiple choice, large option sets)
+      enum:
+        - textfield
+        - textarea
+        - number
+        - select
+        - radio
+        - checklist
+        - checkbox
+        - date
+        - datetime
+        - duration
+        - group
+        - dynamiclist
+        - juel
+        - expression
+        - iframe
+        - image
+        - filepicker
+        - separator
+        - spacer
+        - table
+        - time
+        - html
+        - button
+        - documentPreview
+        - taglist
+    Form:
+      x-kotlin-implements:
+        - ru.briany.domain.form.FormResponse<Any>
+      x-kotlin-implements-fields:
+        - id
+        - key
+        - name
+        - version
+        - schema
+        - variables
+        - deploymentId
+        - deployedAt
+      type: object
+      example:
+        id: 5614ef25-33f9-49d8-b0fc-3e4e67269c0d
+        key: orderApproval
+        name: Order Approval
+        version: 4
+        schema:
+          id: orderApproval
+          type: default
+          components:
+            - key: approved
+              type: checkbox
+              label: Approve
+        variables:
+          - approved
+          - comment
+        deploymentId: dep-7741
+        deployedAt: '2026-04-07T08:00:00Z'
+      required:
+        - id
+        - key
+        - version
+        - schema
+        - variables
+        - deploymentId
+        - deployedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        key:
+          type: string
+        name:
+          type: string
+        version:
+          type: integer
+        schema:
+          $ref: '#/components/schemas/FormSchema'
+        variables:
+          type: array
+          items:
+            type: string
+        deploymentId:
+          type: string
+        deployedAt:
+          type: string
+          format: date-time
+    TaskForm:
+      type: object
+      required:
+        - task
+        - form
+        - variables
+      properties:
+        task:
+          $ref: '#/components/schemas/Task'
+        form:
+          $ref: '#/components/schemas/Form'
+        variables:
+          type: object
+          additionalProperties: true
+      example:
+        task:
+          id: '7743'
+          name: Approve Order
+          state: active
+          priority: 50
+        form:
+          id: 5614ef25-33f9-49d8-b0fc-3e4e67269c0a
+          key: orderApproval
+          version: 4
+          schema:
+            id: orderApprovalSchema
+          variables:
+            - approved
+            - comment
+          deploymentId: dep-7741
+          deployedAt: '2026-04-07T08:00:00Z'
+        variables:
+          approved: false
+          comment: ''
+    PagedResponse:
+      title: PagedResponse
+      type: object
+      required:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrevious:
+          type: boolean
+    ProcessInstanceState:
+      title: ProcessInstanceState
+      enum:
+        - running
+        - completed
+        - suspended
+    UUID:
+      title: UUID
+      type: string
+      format: uuid
+      description: Universally unique identifier in RFC 9562 format

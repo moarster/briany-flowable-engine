@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-create-brn-form-definition
+      author: donchenko
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: brn_form_definition
+      changes:
+        - sqlFile:
+            path: db/changelog/changeset/0001_create_brn_form_definition.sql
+            dbms: postgresql

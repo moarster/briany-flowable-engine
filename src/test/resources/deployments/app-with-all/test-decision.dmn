@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             id="definitions"
+             name="Deploy Test Decision"
+             namespace="http://flowable.org/test">
+  <decision id="deployTestDecision" name="Deploy Test Decision">
+    <decisionTable id="decisionTable1" hitPolicy="FIRST">
+      <input id="input1" label="Input">
+        <inputExpression id="inputExpression1" typeRef="string">
+          <text>input</text>
+        </inputExpression>
+      </input>
+      <output id="output1" label="Output" name="output" typeRef="string"/>
+      <rule id="rule1">
+        <inputEntry id="inputEntry1"><text>"A"</text></inputEntry>
+        <outputEntry id="outputEntry1"><text>"Result A"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

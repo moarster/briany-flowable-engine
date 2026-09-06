@@ -1,0 +1,8 @@
+{
+  "key": "sample-channel",
+  "name": "Sample outbound channel",
+  "channelType": "outbound",
+  "type": "kafka",
+  "topic": "${briany.customer-key}.sample-channel",
+  "serializerType": "json"
+}

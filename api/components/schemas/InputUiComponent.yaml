@@ -1,0 +1,62 @@
+$schema:  https://json-schema.org/draft/2020-12/schema
+id: InputUiComponent
+type: object
+description: |
+  Common attributes of data input fields in the web UI.
+required:
+  - type
+properties:
+  key:
+    type: string
+    title: Field key
+    description: 'Machine name of the field, unique within the form.'
+    example: key
+  type:
+    title: Field type
+    description: 'Determines how the field is rendered, validated, etc. The implementation (allowed values) may vary.'
+  label:
+    type: string
+    title: Label
+    description: Label shown above the field. Defaults to `key`.
+    example: Key
+  defaultValue:
+    title: Default value
+    description: 'Value used before user input.'
+  placeholder:
+    type: string
+    title: Placeholder
+    description: Hint text shown in an empty field. Not persisted.
+    example: Enter a value
+  values:
+    type: array
+    title: Options
+    description: Allowed options for type `Dropdown`. Ignored for other types.
+    items:
+      $ref: '#/$defs/InputUiOption'
+  tooltip:
+    type: string
+    title: Tooltip
+    description: 'Text shown on hover over the field label.'
+    example: 'If the value does not serialize to JSON, it is stored as text'
+  description:
+    type: string
+    title: Description
+    description: 'Explanation shown below the field.'
+    example: Unique id of the stored object
+
+$defs:
+  InputUiOption:
+    type: object
+    description: A single choice option.
+    required:
+      - label
+      - value
+    properties:
+      label:
+        type: string
+        description: Displayed label of the option.
+        example: Extract
+        default: ''
+      value:
+        title: Value
+        description: 'Value used when the option is selected.'

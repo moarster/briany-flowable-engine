@@ -1,0 +1,28 @@
+# Override that switches auth to the JWKS strategy and adds a Keycloak issuer.
+# Run alongside the base file:
+#   docker compose -f docker-compose.yml -f docker-compose.jwks.yml up
+services:
+  bpm:
+    environment:
+      BRIANY_SECURITY_AUTH_STRATEGY: jwks
+      BRIANY_SECURITY_AUTH_JWKS_ISSUER_URI: ${JWKS_ISSUER_URI:-http://keycloak:8080/realms/bpm}
+      BRIANY_SECURITY_AUTH_JWKS_JWK_SET_URI: ${JWKS_JWK_SET_URI:-http://keycloak:8080/realms/bpm/protocol/openid-connect/certs}
+      BRIANY_SECURITY_AUTH_JWKS_AUDIENCES: ${JWKS_AUDIENCES:-}
+      BRIANY_SECURITY_AUTH_JWKS_USERNAME_CLAIM: ${JWKS_USERNAME_CLAIM:-preferred_username}
+    depends_on:
+      keycloak:
+        condition: service_started
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    ports:
+      - "${KEYCLOAK_PORT:-8080}:8080"
+    restart: unless-stopped

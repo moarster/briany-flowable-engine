@@ -1,0 +1,39 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_size = 4
+indent_style = space
+max_line_length = 140
+
+# -- ktlint rules ---------------------------------------------------------------
+
+# No wildcard imports
+ktlint_standard_no-wildcard-imports = enabled
+
+# No unused imports
+ktlint_standard_no-unused-imports = enabled
+
+# Trailing comma in multi-line declarations (Kotlin style guide)
+ktlint_standard_trailing-comma-on-declaration-site = enabled
+ktlint_standard_trailing-comma-on-call-site = enabled
+
+# At most 1 consecutive blank line inside functions
+ktlint_standard_no-consecutive-blank-lines = enabled
+
+# One argument per line when a function signature exceeds max_line_length
+ktlint_standard_function-signature = enabled
+
+# No empty class bodies {}
+ktlint_standard_no-empty-class-body = enabled
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.{xml,json}]
+indent_size = 2

@@ -1,0 +1,59 @@
+{
+  "components": [
+    {
+      "label": "Text field",
+      "type": "textfield",
+      "id": "Field_0esvmrf",
+      "key": "TextX"
+    },
+    {
+      "label": "NumberA",
+      "type": "number",
+      "id": "NumberA",
+      "key": "NumberA"
+    },
+    {
+      "label": "NumberB",
+      "type": "number",
+      "id": "NumberB",
+      "key": "NumberB",
+      "validate": {
+        "min": "=NumberA"
+      }
+    },
+    {
+      "label": "Dynamic list",
+      "components": [
+        {
+          "label": "Number",
+          "type": "number",
+          "id": "Field_1k79sg2",
+          "key": "numZ",
+          "validate": {
+            "min": "=string length(textY)"
+          }
+        },
+        {
+          "label": "Text field",
+          "type": "textfield",
+          "id": "Field_1ys8g8y",
+          "key": "textY"
+        }
+      ],
+      "showOutline": true,
+      "isRepeating": true,
+      "allowAddRemove": true,
+      "defaultRepetitions": 1,
+      "type": "dynamiclist",
+      "id": "Field_0v4al83",
+      "path": "ar"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0k2vl7s",
+  "exporter": {
+    "name": "form-js (https://demo.bpmn.io)",
+    "version": "1.19.0"
+  },
+  "schemaVersion": 19
+}

@@ -1,0 +1,257 @@
+$schema:  https://json-schema.org/draft/2020-12/schema
+id: BpmnElementDescriptor
+type: object
+description: |
+  Descriptor for a custom palette element: element metadata plus the form schema
+  for configuring it (the `properties` array). Tells the designer how the element
+  looks, what it's configured with, and how its attributes map into BPMN XML (binding).
+required:
+  - id
+  - version
+  - name
+  - bpmnActivity
+  - properties
+properties:
+  id:
+    type: string
+    title: Descriptor id
+    description: |
+      Stable machine id (kebab-case), unique within the palette.
+      Does not change between versions - changing `id` means a new element.
+    example: kv-task
+  version:
+    type: integer
+    minimum: 1
+    title: Descriptor version
+    description: |
+      Revision number. Pinned into the process definition at design time;
+      older processes keep working against their own descriptor version.
+    example: 1
+  name:
+    type: string
+    title: Element name
+    description: Human-readable name shown in the palette and sidebar title.
+    example: Key-Value store
+  description:
+    type: string
+    title: Description
+    description: Short explanation of what the element does.
+    example: Stores and retrieves data by key
+  icon:
+    type: string
+    title: Icon
+    description: |
+      Element icon as a self-contained data URI (`data:image/svg+xml;base64,...`).
+      The source descriptor stores a plain SVG; the server converts it to a data URI
+      on load so the palette response is self-contained (no extra requests).
+    example: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0i...'
+  documentation:
+    type: string
+    format: uri
+    title: Documentation link
+    description: URL of external documentation for the element (unlike `description`, this is a link).
+  category:
+    $ref: '#/$defs/BpmnElementCategory'
+  bpmnActivity:
+    type: string
+    title: BPMN node
+    description: |
+      The BPMN 2.0 / Flowable node the element compiles into in the source `.bpmn`
+      (XML local name), e.g. `serviceTask`, `externalWorkerServiceTask`, `userTask`.
+    example: serviceTask
+  properties:
+    type: array
+    description: |
+      The element's arguments - the settings form schema shown in the sidebar.
+      Order matches the display order of the fields.
+    items:
+      $ref: '#/$defs/BpmnElementProperty'
+$defs:
+  BpmnElementCategory:
+    type: object
+    description: Element category (used as the palette grouping key).
+    required:
+      - id
+      - name
+    properties:
+      id:
+        type: string
+        description: Machine id of the category.
+        example: db
+      name:
+        type: string
+        description: Human-readable category name.
+        example: Storage
+  BpmnElementProperty:
+    description: |
+      A single element argument - describes a UI input in the sidebar form and the
+      rule for writing it into BPMN.
+    allOf:
+      - $ref: './InputUiComponent.yaml'
+      - type: object
+        properties:
+          type:
+            $ref: '#/$defs/BpmnElementPropertyType'
+          defaultValue:
+            allOf:
+              - $ref: '#/$defs/BpmnElementPropertyValue'
+            title: Default value
+            description: |
+              Value used before user input. For type `Hidden` this is a required
+              constant baked into the XML (e.g. `${kvDelegate}`).
+          juel:
+            $ref: '#/$defs/BpmnElementPropertyJuel'
+          required:
+            type: boolean
+            default: false
+            title: Required
+            description: |
+              Field must be filled in. Ignored when the field is hidden by `condition`
+              (analogous to Camunda's `constraints.notEmpty`).
+          pattern:
+            $ref: '#/$defs/BpmnElementPropertyPattern'
+          condition:
+            $ref: '#/$defs/BpmnElementPropertyCondition'
+          editable:
+            type: boolean
+            default: true
+            title: Editable
+            description: 'If `false`, the field is shown but cannot be changed.'
+          binding:
+            $ref: '#/$defs/BpmnElementPropertyBinding'
+  BpmnElementPropertyType:
+    type: string
+    x-stoplight:
+      id: cdaa1b07e3acd
+    title: Parameter type
+    description: |
+      The kind of UI input and the value type of the parameter:
+        - `String` - single-line input;
+        - `Number` - numeric input;
+        - `Text` - multi-line input;
+        - `Boolean` - checkbox (boolean);
+        - `Dropdown` - choice from `values`;
+        - `Hidden` - not displayed, but participates in binding (constant in `defaultValue`).
+    enum:
+      - String
+      - Number
+      - Text
+      - Boolean
+      - Dropdown
+      - Hidden
+    example: String
+  BpmnElementPropertyJuel:
+    type: string
+    title: JUEL expression mode
+    description: |
+      Whether a JUEL/Spring-EL expression is allowed as the field value (analogous to
+      Camunda's `feel`):
+        - `forbidden` - constant only (default);
+        - `optional` - the user may switch to an expression;
+        - `required` - the value is always an expression.
+      Flowable uses JUEL/Spring EL, not FEEL.
+    enum:
+      - required
+      - optional
+      - forbidden
+    default: forbidden
+    example: optional
+  BpmnElementPropertyPattern:
+    type: object
+    description: Regex validation for the field value.
+    required:
+      - value
+    properties:
+      value:
+        type: string
+        description: 'Regular expression the value must match.'
+        example: ^P(?=\d|T\d).*$
+      message:
+        type: string
+        description: Error message shown when the value does not match.
+        example: Enter the duration in ISO 8601 format
+  BpmnElementPropertyCondition:
+    type: object
+    description: |
+      Visibility/activity condition for a field relative to another field's value.
+      A field hidden by condition is not displayed and is **not written** to XML.
+      Either a single condition (`property` plus one matcher), or a composite
+      `allMatch` (all nested conditions must hold).
+    properties:
+      property:
+        type: string
+        description: 'The `key` of the other field whose value is checked.'
+        example: type
+      equals:
+        allOf:
+          - $ref: '#/$defs/BpmnElementPropertyValue'
+        description: 'True if the field value equals the given value.'
+      oneOf:
+        type: array
+        description: 'True if the field value is one of the listed values.'
+        items:
+          $ref: '#/$defs/BpmnElementPropertyValue'
+      isActive:
+        type: boolean
+        description: 'True if the other field is active (visible).'
+      allMatch:
+        type: array
+        description: Composite condition - all nested conditions must hold.
+        items:
+          $ref: '#/$defs/BpmnElementPropertyConditionTerm'
+  BpmnElementPropertyConditionTerm:
+    type: object
+    x-stoplight:
+      id: 5046148cfc291
+    description: A single condition inside `allMatch`.
+    required:
+      - property
+    properties:
+      property:
+        type: string
+        description: The `key` of the field being checked.
+        example: type
+      equals:
+        allOf:
+          - $ref: '#/$defs/BpmnElementPropertyValue'
+        description: The field value equals the given value.
+      oneOf:
+        type: array
+        description: The field value is one of the listed values.
+        items:
+          $ref: '#/$defs/BpmnElementPropertyValue'
+      isActive:
+        type: boolean
+        description: The field being checked is active (visible).
+  BpmnElementPropertyBinding:
+    type: object
+    description: |
+      Where the parameter value is written in BPMN XML (a deliberately simplified
+      model compared to Camunda): the value becomes either the tag's text content or
+      an attribute value. If `binding` is absent, the field is UI-only (driven by
+      `condition`) and is not written to XML. The default (`binding` given without
+      `tag`/`attribute`) is a `flowable:field` extension element named after `key`.
+    properties:
+      tag:
+        type: string
+        title: XML tag
+        description: |
+          Which tag to write the value into. Defaults to the element's root node
+          (e.g. `serviceTask`).
+        example: 'flowable:field'
+      attribute:
+        type: string
+        title: XML attribute
+        description: |
+          Which attribute to write the value into. If unset, the value becomes the
+          tag's content.
+        example: 'flowable:delegateExpression'
+  BpmnElementPropertyValue:
+    oneOf:
+      - type: string
+      - type: boolean
+      - type: number
+    description: |
+      An arbitrary scalar parameter value. The type depends on the field type:
+      string for `String`/`Text`/`Hidden`/`Dropdown`, number for `Number`,
+      boolean for `Boolean`.

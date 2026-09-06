@@ -1,0 +1,15 @@
+{
+  "key": "SAMPLE_EVENT",
+  "name": "Sample event",
+  "payload": [
+    { "name": "id", "type": "long" },
+    { "name": "clientId", "type": "long" },
+    { "name": "creditProductId", "type": "long" },
+    { "name": "creditProductName", "type": "string" },
+    { "name": "loanAmount", "type": "double" },
+    { "name": "currencyId", "type": "long" },
+    { "name": "currentStatusId", "type": "long" },
+    { "name": "currentProcessingStatusId", "type": "long" },
+    { "name": "creationDate", "type": "string" }
+  ]
+}

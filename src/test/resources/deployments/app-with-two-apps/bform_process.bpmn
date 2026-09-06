@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/bpmn" targetNamespace="http://www.flowable.org/processdef">
+  <process id="bform_process" name="Form Process" isExecutable="true" flowable:candidateStarterUsers="" flowable:candidateStarterGroups="" flowable:versionTag="">
+    <startEvent id="Event_17544nw">
+      <outgoing>Flow_1cmy6ih</outgoing>
+    </startEvent>
+    <sequenceFlow id="Flow_1cmy6ih" sourceRef="Event_17544nw" targetRef="Gateway_1rvn928" />
+    <exclusiveGateway id="Gateway_1rvn928">
+      <incoming>Flow_1cmy6ih</incoming>
+      <incoming>Flow_12ymlog</incoming>
+      <outgoing>Flow_0fzfy93</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_0fzfy93" sourceRef="Gateway_1rvn928" targetRef="Activity_0mol1kr" />
+    <exclusiveGateway id="Gateway_1wxxfug" name="never colored">
+      <incoming>Flow_11ndp4k</incoming>
+      <outgoing>Flow_12ymlog</outgoing>
+      <outgoing>Flow_0s0oz1h</outgoing>
+      <outgoing>Flow_03co9m0</outgoing>
+      <outgoing>Flow_1gbcl8f</outgoing>
+    </exclusiveGateway>
+    <sequenceFlow id="Flow_11ndp4k" sourceRef="Activity_0mol1kr" targetRef="Gateway_1wxxfug" />
+    <sequenceFlow id="Flow_12ymlog" name="i  &#60; 10" sourceRef="Gateway_1wxxfug" targetRef="Gateway_1rvn928" flowable:skipExpression="">
+      <conditionExpression xsi:type="tFormalExpression">${i &lt; 10}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_1cgz11b" name="Finished">
+      <documentation>Some description</documentation>
+      <incoming>Flow_0s0oz1h</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_0s0oz1h" sourceRef="Gateway_1wxxfug" targetRef="Event_1cgz11b" />
+    <scriptTask id="Activity_0mol1kr" name="i++" scriptFormat="groovy" flowable:autoStoreVariables="false" flowable:resultVariable="" flowable:async="true">
+      <incoming>Flow_0fzfy93</incoming>
+      <outgoing>Flow_11ndp4k</outgoing>
+      <script>execution.setVariable("i", (execution.getVariable("i") ?: 0) + 1);
+execution.setVariable("var_${i}", "a")</script>
+    </scriptTask>
+    <endEvent id="Event_0275rnf" name="never">
+      <incoming>Flow_03co9m0</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_03co9m0" name="" sourceRef="Gateway_1wxxfug" targetRef="Event_0275rnf" flowable:skipExpression="">
+      <conditionExpression xsi:type="tFormalExpression">${false}</conditionExpression>
+    </sequenceFlow>
+    <endEvent id="Event_0thnyqw" name="never colored">
+      <incoming>Flow_1gbcl8f</incoming>
+    </endEvent>
+    <sequenceFlow id="Flow_1gbcl8f" sourceRef="Gateway_1wxxfug" targetRef="Event_0thnyqw" />
+    <textAnnotation id="TextAnnotation_0ofhh1l">
+      <text>hello world</text>
+    </textAnnotation>
+    <association id="Association_0s6w468" associationDirection="None" sourceRef="Event_1cgz11b" targetRef="TextAnnotation_0ofhh1l" />
+  </process>
+
+</definitions>

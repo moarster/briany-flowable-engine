@@ -1,0 +1,14 @@
+{
+  "id": "sampleForm",
+  "key": "sampleForm",
+  "type": "default",
+  "components": [
+    {
+      "id": "field-1",
+      "type": "textfield",
+      "key": "fieldOne",
+      "label": "Field one"
+    }
+  ],
+  "schemaVersion": 1
+}

@@ -1,0 +1,92 @@
+# config/detekt/detekt.yml
+#
+# buildUponDefaultConfig = true, so this file only contains overrides and enables
+# rules that are inactive by default.
+
+complexity:
+  active: true
+  LongMethod:
+    allowedLines: 60
+  LongParameterList:
+    allowedFunctionParameters: 8
+    ignoreAnnotatedParameter:
+      - 'org.springframework.web.bind.annotation.RequestMapping'
+      - 'org.springframework.web.bind.annotation.GetMapping'
+      - 'org.springframework.web.bind.annotation.PostMapping'
+      - 'org.springframework.web.bind.annotation.PutMapping'
+      - 'org.springframework.web.bind.annotation.DeleteMapping'
+      - 'jakarta.persistence.Entity'
+  TooManyFunctions:
+    allowedFunctionsPerClass: 25
+    allowedFunctionsPerFile: 25
+  CyclomaticComplexMethod:
+    allowedComplexity: 15
+  LargeClass:
+    allowedLines: 600
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+    exceptionNames:
+      - 'Exception'
+      - 'RuntimeException'
+      - 'Throwable'
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
+  SwallowedException:
+    active: true
+  ThrowingExceptionInMain:
+    active: true
+
+style:
+  ForbiddenComment:
+    active: false
+    allowedPatterns: ''
+  MagicNumber:
+    active: true
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+      - '100'
+      - '1000'
+      - '1_000'
+    ignoreAnnotated:
+      - 'org.springframework.web.bind.annotation.*'
+      - 'org.springframework.beans.factory.annotation.Value'
+      - 'org.springframework.core.annotation.Order'
+    ignorePropertyDeclaration: true
+    ignoreConstantDeclaration: true
+    ignoreEnums: true
+  MaxLineLength:
+    maxLineLength: 140
+  ReturnCount:
+    max: 4
+  UnusedPrivateFunction:
+    active: true
+  UseDataClass:
+    active: true
+    ignoreAnnotated:
+      - 'jakarta.persistence.Entity'
+      - 'org.springframework.boot.context.properties.ConfigurationProperties'
+  ForbiddenMethodCall:
+    active: true
+    methods:
+      - reason: 'Use an SLF4J logger'
+        value: 'kotlin.io.println'
+      - reason: 'Use an SLF4J logger'
+        value: 'java.io.PrintStream.println'
+
+potential-bugs:
+  CastToNullableType:
+    active: true
+  DoubleMutabilityForCollection:
+    active: true
+  UnsafeCallOnNullableType:       # catches !!
+    active: true
+  UnreachableCatchBlock:
+    active: true
+
+performance:
+  SpreadOperator:
+    active: false
