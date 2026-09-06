@@ -5,13 +5,6 @@ info:
   description: |
     REST API for a Flowable-based BPM platform.
 
-    The target contract after the REST redesign. The spec deliberately separates four
-    audiences:
-    - **public** - business and workflow operations for client applications;
-    - **admin** - operator and observability endpoints;
-    - **internal** - dev/debug tooling, not for external clients;
-    - **testing** - e2e and destructive test utilities.
-
     All list endpoints return paginated results in a unified `PagedResponse` shape
     (`page`, `pageSize`, `totalElements`, `totalPages`, `hasNext`, `hasPrevious`).
 
@@ -24,7 +17,7 @@ info:
   license:
     name: ''
 servers:
-  - url: 'http://10.6.18.196:8095'
+  - url: 'https://briany.ru'
     description: Developer Stand
 security:
   - BasicAuth: []
@@ -46,15 +39,16 @@ tags:
     description: Catalog of forms. Forms describe the user interface for tasks and start events.
     x-audience: public
     x-implemented: true
+  - name: ModelerApp
+    description: 'Server-side BPMN/DMN/bform modeling workspace. Stores editable sources without an immediate engine deployment and tracks draft/synced/ahead synchronization state against Flowable.'
+    x-audience: public
+    x-implemented: true
 paths:
   /api/v1/applications:
     get:
       tags:
         - Application
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/AppDefinitionsController
       operationId: listApplications
       summary: List applications (latest versions)
       description: |
@@ -80,9 +74,6 @@ paths:
     post:
       tags:
         - Application
-      x-audience: public
-      x-controller-replaces:
-        - deployment/DeploymentController
       operationId: deployApplication
       summary: Deploys an application from a ZIP archive
       description: |
@@ -119,10 +110,7 @@ paths:
     get:
       tags:
         - Application
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/AppDefinitionsController
       operationId: listApplicationsVersions
       summary: List applications (all versions)
       description: |
@@ -149,9 +137,6 @@ paths:
     get:
       tags:
         - Application
-      x-audience: public
-      x-controller-replaces:
-        - work/AppDefinitionsController
       operationId: getApplication
       summary: Get application by key (latest version)
       description: |
@@ -177,10 +162,7 @@ paths:
     get:
       tags:
         - Application
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/AppDefinitionsController
       operationId: listApplicationVersions
       summary: Get application by key (all versions)
       description: |
@@ -205,9 +187,6 @@ paths:
     get:
       tags:
         - Application
-      x-audience: public
-      x-controller-replaces:
-        - work/AppDefinitionsController
       operationId: getApplicationVersion
       summary: Get application by id or key (specific version)
       description: |
@@ -232,10 +211,7 @@ paths:
     get:
       tags:
         - ProcessDefinition
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/ProcessDefinitionsController
       x-with-principal: true
       operationId: listProcesses
       summary: List process definitions (latest versions)
@@ -261,10 +237,7 @@ paths:
     get:
       tags:
         - ProcessDefinition
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/ProcessDefinitionsController
       operationId: listProcessDefinitionsVersions
       summary: List process definitions (all versions)
       description: |
@@ -289,9 +262,6 @@ paths:
     get:
       tags:
         - ProcessDefinition
-      x-audience: public
-      x-controller-replaces:
-        - work/ProcessDefinitionsController
       x-with-principal: true
       operationId: getProcess
       summary: Get process definition by key (latest version)
@@ -316,10 +286,7 @@ paths:
     get:
       tags:
         - ProcessDefinition
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/ProcessDefinitionsController
       x-with-principal: true
       operationId: listProcessDefinitionVersions
       summary: Get all versions of a process definition
@@ -345,9 +312,6 @@ paths:
     get:
       tags:
         - ProcessDefinition
-      x-audience: public
-      x-controller-replaces:
-        - work/ProcessDefinitionsController
       x-with-principal: true
       operationId: getProcessDefinitionVersion
       summary: Get process definition by version
@@ -374,9 +338,6 @@ paths:
       tags:
         - ProcessInstance
       x-spring-paginated: true
-      x-audience: public
-      x-controller-replaces:
-        - work/ProcessInstanceQueryController
       x-with-principal: true
       operationId: listProcessProcessInstances
       summary: List instances of a process definition
@@ -408,9 +369,6 @@ paths:
       tags:
         - ProcessInstance
       x-spring-paginated: true
-      x-audience: public
-      x-controller-replaces:
-        - work/ProcessInstanceQueryController
       x-with-principal: true
       operationId: listProcessDefinitionVersionInstances
       summary: List instances of a single process definition version
@@ -442,10 +400,7 @@ paths:
     get:
       tags:
         - ProcessInstance
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - work/ProcessInstanceQueryController
       x-with-principal: true
       operationId: listProcessInstances
       summary: List process instances
@@ -474,9 +429,6 @@ paths:
     get:
       tags:
         - ProcessInstances
-      x-audience: public
-      x-controller-replaces:
-        - work/ProcessInstanceQueryController
       operationId: getProcessInstance
       summary: Get process instance by id
       responses:
@@ -503,10 +455,7 @@ paths:
     get:
       tags:
         - Form
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - forms/FormController
       operationId: listForms
       summary: List forms (latest versions)
       description: |
@@ -531,9 +480,6 @@ paths:
     get:
       tags:
         - Form
-      x-audience: public
-      x-controller-replaces:
-        - forms/FormController
       operationId: getForm
       summary: Get form by key (latest version)
       description: |
@@ -561,10 +507,7 @@ paths:
     get:
       tags:
         - Form
-      x-audience: public
       x-spring-paginated: true
-      x-controller-replaces:
-        - forms/FormController
       operationId: getFormVersions
       summary: Get form by id or key (all versions)
       description: |
@@ -588,9 +531,6 @@ paths:
     get:
       tags:
         - Form
-      x-audience: public
-      x-controller-replaces:
-        - forms/FormController
       operationId: getFormVersion
       summary: Get form by id or key (specific version)
       description: |
@@ -611,6 +551,355 @@ paths:
     parameters:
       - $ref: '#/components/parameters/Key'
       - $ref: '#/components/parameters/Version'
+  /api/v1/modeler-apps:
+    get:
+      tags:
+        - ModelerApp
+      x-spring-paginated: true
+      operationId: listModelerApps
+      summary: List modeler apps
+      description: |
+        Returns a paginated list of modeler apps. Optionally filtered by synchronization state.
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - name: state
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ModelerAppState'
+          description: Filters by synchronization state. If omitted, all modeler apps are returned.
+      responses:
+        '200':
+          description: Page of modeler apps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerAppPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+        - ModelerApp
+      operationId: createModelerApp
+      summary: Create a modeler app
+      description: |
+        Creates an empty modeler app workspace identified by a unique key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModelerAppRequest'
+      responses:
+        '201':
+          description: Modeler app created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerApp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  '/api/v1/modeler-apps/{key}':
+    get:
+      tags:
+        - ModelerApp
+      operationId: getModelerApp
+      summary: Get a modeler app by key
+      description: |
+        Returns a modeler app with its files and, when deployed, the embedded deployed application.
+      responses:
+        '200':
+          description: Modeler app data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerApp'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - ModelerApp
+      operationId: updateModelerApp
+      summary: Update modeler app metadata
+      description: |
+        Updates the mutable metadata of a modeler app. The key is immutable.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateModelerAppRequest'
+      responses:
+        '200':
+          description: Modeler app updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerApp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - ModelerApp
+      operationId: deleteModelerApp
+      summary: Delete a modeler app
+      description: |
+        Deletes a modeler app and its files. If the app is deployed, the engine deployment is cascade-removed.
+      responses:
+        '204':
+          description: Modeler app deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/modeler-apps/{key}/deploy':
+    post:
+      tags:
+        - ModelerApp
+      operationId: deployModelerApp
+      summary: Deploy a modeler app to the engine
+      description: |
+        Synthesizes an .app resource, bundles the workspace files, and deploys them to Flowable.
+      responses:
+        '200':
+          description: Modeler app deployed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerApp'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/modeler-apps/{key}/undeploy':
+    post:
+      tags:
+        - ModelerApp
+      operationId: undeployModelerApp
+      summary: Undeploy a modeler app
+      description: |
+        Removes the engine deployment while keeping the workspace, returning the app to draft state.
+      responses:
+        '200':
+          description: Modeler app undeployed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerApp'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/modeler-apps/{key}/files':
+    get:
+      tags:
+        - ModelerApp
+      operationId: listModelerAppFiles
+      summary: List modeler app files
+      description: |
+        Returns the summaries of all files in a modeler app workspace.
+      responses:
+        '200':
+          description: List of modeler app file summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelerAppFileSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+        - ModelerApp
+      operationId: upsertModelerAppFile
+      summary: Upload or replace a modeler app file
+      description: |
+        Uploads a bpmn/dmn/bform file. The file key is derived from the content; an existing file with the same key is replaced.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: A single bpmn/dmn/bform source file.
+      responses:
+        '200':
+          description: Existing file replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerAppFile'
+        '201':
+          description: New file created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerAppFile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+  '/api/v1/modeler-apps/{key}/files/{fileKey}':
+    get:
+      tags:
+        - ModelerApp
+      operationId: getModelerAppFile
+      summary: Get a modeler app file
+      description: |
+        Returns the metadata of a single file: state, hashes, errors, and engine resource id.
+      responses:
+        '200':
+          description: Modeler app file metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerAppFile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - ModelerApp
+      operationId: updateModelerAppFileContent
+      summary: Replace a modeler app file content
+      description: |
+        Replaces the content of an existing file. The derived key must match the path file key.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: A single bpmn/dmn/bform source file.
+      responses:
+        '200':
+          description: File content replaced
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelerAppFile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - ModelerApp
+      operationId: deleteModelerAppFile
+      summary: Delete a modeler app file
+      description: |
+        Removes a file from the workspace. If the app is deployed, it becomes ahead.
+      responses:
+        '204':
+          description: File deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/FileKey'
+  '/api/v1/modeler-apps/{key}/files/{fileKey}/content':
+    get:
+      tags:
+        - ModelerApp
+      operationId: getModelerAppFileContent
+      summary: Get raw modeler app file content
+      description: |
+        Returns the raw source bytes of a file with a Content-Disposition header carrying the resource name.
+      responses:
+        '200':
+          description: Raw file content
+          content:
+            application/xml:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    parameters:
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/FileKey'
 components:
   securitySchemes:
     BasicAuth:
@@ -676,6 +965,13 @@ components:
       schema:
         type: integer
       description: Version identifier
+    FileKey:
+      name: fileKey
+      in: path
+      required: true
+      schema:
+        type: string
+      description: file key derived from the file content
   responses:
     BadRequest:
       description: Invalid request
@@ -792,17 +1088,19 @@ components:
         - type: object
           properties:
             deployedResources:
-              type: object
-              properties:
-                processDefinitions:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/ResourceRef'
-                bforms:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/ResourceRef'
+              $ref: '#/components/schemas/ApplicationDeployedResources'
         - $ref: '#/components/schemas/ApplicationRef'
+    ApplicationDeployedResources:
+      type: object
+      properties:
+        processDefinitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceRef'
+        bforms:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResourceRef'
     ApplicationRef:
       allOf:
         - type: object
@@ -1544,6 +1842,217 @@ components:
         - running
         - completed
         - suspended
+    ModelerAppState:
+      title: ModelerAppState
+      type: string
+      enum:
+        - draft
+        - synced
+        - ahead
+      description: |
+        Synchronization state relative to the engine.
+        - `draft` - never deployed
+        - `synced` - deployed content matches the workspace
+        - `ahead` - the workspace differs from the deployed content
+    ModelerFileType:
+      title: ModelerFileType
+      type: string
+      enum:
+        - bpmn
+        - dmn
+        - bform
+      description: The kind of modeling source file.
+    ModelerFileErrorSeverity:
+      title: ModelerFileErrorSeverity
+      type: string
+      enum:
+        - error
+        - warning
+    ModelerFileError:
+      type: object
+      required:
+        - severity
+        - code
+        - message
+      properties:
+        severity:
+          $ref: '#/components/schemas/ModelerFileErrorSeverity'
+        code:
+          type: string
+        message:
+          type: string
+        at:
+          type: string
+          format: date-time
+    CreateModelerAppRequest:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 4000
+        readme:
+          type: string
+    UpdateModelerAppRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 4000
+        readme:
+          type: string
+    ModelerAppFileSummary:
+      type: object
+      required:
+        - id
+        - appKey
+        - fileKey
+        - type
+        - state
+        - resourceName
+        - errorCount
+      properties:
+        id:
+          type: string
+          format: uuid
+        appKey:
+          type: string
+        fileKey:
+          type: string
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/ModelerFileType'
+        state:
+          $ref: '#/components/schemas/ModelerAppState'
+        resourceName:
+          type: string
+        engineResourceId:
+          type: string
+        errorCount:
+          type: integer
+    ModelerAppFile:
+      type: object
+      required:
+        - id
+        - appKey
+        - fileKey
+        - type
+        - state
+        - resourceName
+        - contentHash
+        - errors
+      properties:
+        id:
+          type: string
+          format: uuid
+        appKey:
+          type: string
+        fileKey:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/ModelerFileType'
+        state:
+          $ref: '#/components/schemas/ModelerAppState'
+        resourceName:
+          type: string
+        engineResourceId:
+          type: string
+        contentHash:
+          type: string
+        deployedHash:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelerFileError'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ModelerAppRef:
+      type: object
+      required:
+        - id
+        - key
+        - state
+      properties:
+        id:
+          type: string
+          format: uuid
+        key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        state:
+          $ref: '#/components/schemas/ModelerAppState'
+        appDefinitionId:
+          type: string
+        deploymentId:
+          type: string
+        deployedVersion:
+          type: integer
+        deployedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ModelerApp:
+      allOf:
+        - type: object
+          properties:
+            readme:
+              type: string
+            files:
+              type: array
+              items:
+                $ref: '#/components/schemas/ModelerAppFileSummary'
+            deployedApplication:
+              $ref: '#/components/schemas/ApplicationRef'
+        - $ref: '#/components/schemas/ModelerAppRef'
+    ModelerAppPage:
+      x-kotlin-implements:
+        - ru.briany.common.api.dtos.PagedList<ModelerAppRef>
+      x-kotlin-implements-fields:
+        - data
+        - page
+        - pageSize
+        - totalElements
+        - totalPages
+        - hasNext
+        - hasPrevious
+      allOf:
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ModelerAppRef'
+        - $ref: '#/components/schemas/PagedResponse'
     UUID:
       title: UUID
       type: string

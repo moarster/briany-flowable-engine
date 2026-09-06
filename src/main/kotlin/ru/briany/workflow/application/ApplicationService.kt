@@ -20,6 +20,7 @@ import java.util.UUID
 @Service
 class ApplicationService(
     private val appRepositoryService: AppRepositoryService,
+    private val deploymentService: DeploymentService,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
@@ -66,7 +67,24 @@ class ApplicationService(
                     HttpStatus.NOT_FOUND,
                     "App definition not found: $key",
                 )
-        return ApplicationMapper.from(definition, getAppDeployment(definition))
+        return toApplicationWithResources(definition)
+    }
+
+    fun findApplication(key: String): Application? {
+        val definition =
+            appRepositoryService
+                .createAppDefinitionQuery()
+                .latestVersion()
+                .appDefinitionKey(key)
+                .singleResult()
+                ?: return null
+        return toApplicationWithResources(definition)
+    }
+
+    private fun toApplicationWithResources(definition: AppDefinition): Application {
+        val deployment = getAppDeployment(definition)
+        val resources = deploymentService.resolveDeployedResources(definition.deploymentId)
+        return ApplicationMapper.from(definition, deployment, resources)
     }
 
     fun getApplication(

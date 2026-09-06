@@ -11,3 +11,15 @@ databaseChangeLog:
         - sqlFile:
             path: db/changelog/changeset/0001_create_brn_form_definition.sql
             dbms: postgresql
+  - changeSet:
+      id: 0002-create-brn-modeler-app
+      author: ivan
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: brn_modeler_app
+      changes:
+        - sqlFile:
+            path: db/changelog/changeset/0002_create_brn_modeler_app.sql
+            dbms: postgresql

@@ -43,8 +43,6 @@ Flowable 8 and Spring Boot 4 are both new - verify bleeding-edge APIs, don't ass
 - `article/index.ru.md` - the article series (Russian).
 - `api/` - the OpenAPI contract: `openapi-v1.yaml` (source of truth for codegen) plus
   `components/schemas/*.yaml` (BPMN palette schemas consumed by the descriptor task).
-- `openapi-lint/` - Spectral ruleset + minimal npm deps, driven by the Gradle
-  `lintOpenApi` task. The only place the contract's lint config lives.
 - `bpmn-descriptors/` - JSON descriptors + the `BpmnElementDescriptor` schema feeding
   the palette (theme 2).
 - `docker-compose.yml` - postgres + app, auth strategy `flowable` (HTTP Basic vs engine IDM).
@@ -65,22 +63,12 @@ Each strategy is a `@ConditionalOnProperty` bean in `security/`:
 
 Source of truth for the REST API. `openApiGenerate` (kotlin-spring, `interfaceOnly`)
 generates `*Api` interfaces into `build/generated/openapi`; controllers implement them.
-Descriptions are in Russian; anchor every description in official docs, don't invent.
+Descriptions are in English; anchor every description in official docs, don't invent.
 
-- **Linting:** `./gradlew lintOpenApi` runs Spectral using `openapi-lint/.spectral.cjs`
-  (extends `oas:recommended`). Rules: `operationId` + exactly one `tag` required (error);
-  `x-audience` in {public, admin, internal, testing} (error); `x-implemented` boolean
-  (error); PascalCase schema names, per-operation `summary`, per-tag `description` (warn).
-  Kept off `check`, like ktlint/detekt.
-- **Custom generator template:** `openapi-templates/kotlin-spring/apiInterface.mustache`
-  injects `@AuthenticationPrincipal userId: kotlin.String` into operations marked
-  `x-with-principal: true` (wired via `templateDir`).
 - **Tag casing gates codegen:** singular tag (e.g. `Application`) is generated; plural
   (e.g. `Applications`) is filtered out via `globalProperties.apis`.
-- **Vendor extensions:** `x-implemented` (bool, on tags - controller exists yet);
-  `x-audience` (on tags/operations - intended consumer); `x-spring-paginated` (built-in,
-  generates `Pageable`); `x-with-principal` (our template above); `x-controller-replaces`
-  (human-only metadata, no codegen reads it). Document any new extension here.
+- **Vendor extensions:** `x-spring-paginated` (built-in,
+  generates `Pageable`). Document any new extension here.
 
 ## Conventions
 

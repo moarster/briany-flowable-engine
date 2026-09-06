@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             targetNamespace="http://briany.ru/modeler">
+  <process id="processOne" name="Process One" isExecutable="true">
+    <startEvent id="s1"/>
+  </process>
+  <process id="processTwo" name="Process Two" isExecutable="true">
+    <startEvent id="s2"/>
+  </process>
+</definitions>

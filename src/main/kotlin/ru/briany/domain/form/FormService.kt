@@ -12,6 +12,7 @@ import ru.briany.generated.model.Form
 import ru.briany.generated.model.FormSchema
 import ru.briany.generated.model.FormSummary
 import ru.briany.generated.model.FormSummaryPage
+import ru.briany.generated.model.ResourceRef
 import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
@@ -116,6 +117,17 @@ class FormService(
     fun getFormsByDeployment(deploymentId: String): List<Form> =
         formRepository.findByDeploymentId(deploymentId).map {
             it.toResponse()
+        }
+
+    fun getFormResourcesByDeployment(deploymentId: String): Map<String, ResourceRef> =
+        formRepository.findByDeploymentId(deploymentId).associate { entity ->
+            entity.resourceName to
+                ResourceRef(
+                    id = entity.id.toString(),
+                    key = entity.key,
+                    name = entity.name,
+                    version = entity.version,
+                )
         }
 
     fun listVersions(

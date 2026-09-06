@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import ru.briany.domain.form.FormService
 import ru.briany.generated.model.Application
+import ru.briany.generated.model.ResourceRef
 
 @Service
 class DeploymentService(
@@ -98,6 +99,100 @@ class DeploymentService(
         log.info("Deleted deployment [id={}, appDeploymentId={}]", deploymentId, appDeploymentId)
     }
 
+    /**
+     * Cascade-removes every deployed version of an app identified by its app definition key.
+     * A mutable modeler workspace tracks only the latest version, so deletion must clear all of them.
+     */
+    @Transactional
+    fun undeployAppByKey(appDefinitionKey: String) {
+        appRepositoryService
+            .createAppDefinitionQuery()
+            .appDefinitionKey(appDefinitionKey)
+            .list()
+            .map { it.deploymentId }
+            .distinct()
+            .forEach(::undeployApp)
+    }
+
+    /**
+     * Cascade-removes an app deployment rooted at the Flowable app deployment id. Forms are stored
+     * under the app deployment id; process/dmn/cmmn/event resources are child deployments.
+     */
+    @Transactional
+    fun undeployApp(appDeploymentId: String) {
+        formService.deleteByDeploymentId(appDeploymentId)
+        repositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { repositoryService.deleteDeployment(it.id, true) }
+        dmnRepositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { dmnRepositoryService.deleteDeployment(it.id) }
+        cmmnRepositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { cmmnRepositoryService.deleteDeployment(it.id, true) }
+        eventRepositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { eventRepositoryService.deleteDeployment(it.id) }
+        appRepositoryService.deleteDeployment(appDeploymentId, true)
+        log.info("Undeployed app deployment [appDeploymentId={}]", appDeploymentId)
+    }
+
+    /**
+     * Resolves the engine resources produced by an app deployment, keyed by their resource name.
+     * Used to link modeler files to engine ids and to populate Application.deployedResources.
+     */
+    fun resolveDeployedResources(appDeploymentId: String): List<DeployedResource> {
+        val result = mutableListOf<DeployedResource>()
+        formService.getFormResourcesByDeployment(appDeploymentId).forEach { (name, ref) ->
+            result += DeployedResource(name, ref, DeployedResourceKind.FORM)
+        }
+        repositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { child ->
+                repositoryService
+                    .createProcessDefinitionQuery()
+                    .deploymentId(child.id)
+                    .list()
+                    .forEach { pd ->
+                        result +=
+                            DeployedResource(
+                                pd.resourceName,
+                                ResourceRef(id = pd.id, key = pd.key, name = pd.name, version = pd.version),
+                                DeployedResourceKind.PROCESS,
+                            )
+                    }
+            }
+        dmnRepositoryService
+            .createDeploymentQuery()
+            .parentDeploymentId(appDeploymentId)
+            .list()
+            .forEach { child ->
+                dmnRepositoryService
+                    .createDecisionQuery()
+                    .deploymentId(child.id)
+                    .list()
+                    .forEach { decision ->
+                        result +=
+                            DeployedResource(
+                                decision.resourceName,
+                                ResourceRef(id = decision.id, key = decision.key, name = decision.name, version = decision.version),
+                                DeployedResourceKind.DECISION,
+                            )
+                    }
+            }
+        return result
+    }
+
     private fun deleteRelatedDeployments(parentDeploymentId: String) {
         eventRepositoryService
             .createDeploymentQuery()
@@ -117,4 +212,12 @@ class DeploymentService(
             .list()
             .forEach { cmmnRepositoryService.deleteDeployment(it.id, true) }
     }
+
+    enum class DeployedResourceKind { PROCESS, DECISION, FORM }
+
+    data class DeployedResource(
+        val resourceName: String,
+        val ref: ResourceRef,
+        val kind: DeployedResourceKind,
+    )
 }

@@ -33,6 +33,7 @@ class ApplicationServiceTest {
     private lateinit var service: ApplicationService
     private lateinit var query: AppDefinitionQuery
     private lateinit var mockAppDeploymentQuery: AppDeploymentQuery
+    private lateinit var deploymentService: DeploymentService
 
     @BeforeEach
     fun setUp() {
@@ -47,8 +48,13 @@ class ApplicationServiceTest {
                 on { createDeploymentQuery() } doReturn mockAppDeploymentQuery
             }
 
+        deploymentService =
+            mock {
+                on { resolveDeployedResources(any()) } doReturn emptyList()
+            }
+
         service =
-            ApplicationService(appRepositoryService)
+            ApplicationService(appRepositoryService, deploymentService)
     }
 
     private fun mockAppDefinition(
