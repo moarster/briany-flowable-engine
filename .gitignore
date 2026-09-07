@@ -20,5 +20,5 @@ out/
 
 .env
 .tmp
-.log
+*.log
 article/

@@ -9,7 +9,7 @@ RUN apt-get update \
 
 
 COPY build/libs/*.jar app.jar
-COPY api/openapi-v1.yaml .
+COPY contract/rest/openapi-v1.yaml .
 
 RUN mkdir -p /config
 

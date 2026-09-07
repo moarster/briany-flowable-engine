@@ -140,7 +140,7 @@ tasks.jar { enabled = false }
 
 openApiGenerate {
     generatorName.set("kotlin-spring")
-    inputSpec.set("$rootDir/api/openapi-v1.yaml")
+    inputSpec.set("$rootDir/contract/rest/openapi-v1.yaml")
     outputDir.set(
         layout.buildDirectory
             .dir("generated/openapi")
@@ -183,7 +183,7 @@ openApiGenerate {
 
 tasks.openApiGenerate {
     doFirst {
-        val spec = file("$rootDir/api/openapi-v1.yaml")
+        val spec = file("$rootDir/contract/rest/openapi-v1.yaml")
         if (!spec.exists()) {
             throw GradleException("OpenAPI contract not found at api/openapi-v1.yaml")
         }

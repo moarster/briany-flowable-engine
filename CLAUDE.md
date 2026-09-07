@@ -41,7 +41,7 @@ Flowable 8 and Spring Boot 4 are both new - verify bleeding-edge APIs, don't ass
 
 - `src/main/kotlin/ru/briany/` - application code, organised by contour (see themes above).
 - `article/index.ru.md` - the article series (Russian).
-- `api/` - the OpenAPI contract: `openapi-v1.yaml` (source of truth for codegen) plus
+- `contract/rest` - the OpenAPI contract: `openapi-v1.yaml` (source of truth for codegen) plus
   `components/schemas/*.yaml` (BPMN palette schemas consumed by the descriptor task).
 - `bpmn-descriptors/` - JSON descriptors + the `BpmnElementDescriptor` schema feeding
   the palette (theme 2).
@@ -59,7 +59,7 @@ Each strategy is a `@ConditionalOnProperty` bean in `security/`:
 - `jwks` (`JwksStrategy`) - Bearer tokens validated against a JWKS issuer (Keycloak in
   the demo). Config under `briany.security.auth.jwks.*`.
 
-## API contract (`api/openapi-v1.yaml`)
+## API contract (`contract/rest/openapi-v1.yaml`)
 
 Source of truth for the REST API. `openApiGenerate` (kotlin-spring, `interfaceOnly`)
 generates `*Api` interfaces into `build/generated/openapi`; controllers implement them.
