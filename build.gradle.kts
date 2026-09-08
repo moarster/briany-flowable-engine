@@ -172,6 +172,7 @@ openApiGenerate {
     configOptions.set(
         mapOf(
             "interfaceOnly" to "true",
+            "skipDefaultInterface" to "true",
             "useSpringBoot4" to "true",
             "useBeanValidation" to "true",
             "useTags" to "true",
@@ -185,7 +186,7 @@ tasks.openApiGenerate {
     doFirst {
         val spec = file("$rootDir/contract/rest/openapi-v1.yaml")
         if (!spec.exists()) {
-            throw GradleException("OpenAPI contract not found at api/openapi-v1.yaml")
+            throw GradleException("OpenAPI contract not found at contract/rest/openapi-v1.yaml")
         }
     }
 }

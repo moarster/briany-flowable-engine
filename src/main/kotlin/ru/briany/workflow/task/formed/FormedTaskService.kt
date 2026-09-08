@@ -7,29 +7,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import ru.briany.domain.form.FormResponse
 import ru.briany.domain.form.FormService
+import ru.briany.generated.model.FormedTask
+import ru.briany.generated.model.Task
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
-import java.time.Instant
-
-data class TaskDto(
-    val id: String,
-    val name: String?,
-    val description: String?,
-    val assignee: String?,
-    val processInstanceId: String?,
-    val taskDefinitionKey: String?,
-    val formKey: String?,
-    val createTime: Instant?,
-    val endTime: Instant?,
-    val dueDate: Instant?,
-    val priority: Int,
-)
-
-data class FormedTaskResponse(
-    val task: TaskDto,
-    val form: FormResponse<Any>,
-    val variables: Map<String, JsonNode>,
-)
 
 @Service
 class FormedTaskService(
@@ -39,11 +20,11 @@ class FormedTaskService(
     private val objectMapper: ObjectMapper,
 ) {
     // Not the cleanest way to merge runtime and historic tasks, but it handles both uniformly.
-    fun getFormedTask(taskId: String): FormedTaskResponse {
+    fun getFormedTask(taskId: String): FormedTask {
         val runtime = taskService.createTaskQuery().taskId(taskId).singleResult()
 
         data class TaskInfo(
-            val dto: TaskDto,
+            val dto: Task,
             val processInstanceId: String?,
             val processDefinitionId: String?,
         )
@@ -52,7 +33,7 @@ class FormedTaskService(
             if (runtime != null) {
                 TaskInfo(
                     dto =
-                        TaskDto(
+                        Task(
                             id = runtime.id,
                             name = runtime.name,
                             description = runtime.description,
@@ -60,10 +41,11 @@ class FormedTaskService(
                             processInstanceId = runtime.processInstanceId,
                             taskDefinitionKey = runtime.taskDefinitionKey,
                             formKey = runtime.formKey,
-                            createTime = runtime.createTime?.toInstant(),
-                            endTime = null,
-                            dueDate = runtime.dueDate?.toInstant(),
+                            createdAt = runtime.createTime?.toInstant(),
+                            endedAt = null,
+                            dueAt = runtime.dueDate?.toInstant(),
                             priority = runtime.priority,
+                            state = runtime.state,
                         ),
                     processInstanceId = runtime.processInstanceId,
                     processDefinitionId = runtime.processDefinitionId,
@@ -77,7 +59,7 @@ class FormedTaskService(
                         ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found: $taskId")
                 TaskInfo(
                     dto =
-                        TaskDto(
+                        Task(
                             id = historic.id,
                             name = historic.name,
                             description = historic.description,
@@ -85,10 +67,11 @@ class FormedTaskService(
                             processInstanceId = historic.processInstanceId,
                             taskDefinitionKey = historic.taskDefinitionKey,
                             formKey = historic.formKey,
-                            createTime = historic.createTime?.toInstant(),
-                            endTime = historic.endTime?.toInstant(),
-                            dueDate = historic.dueDate?.toInstant(),
+                            createdAt = historic.createTime?.toInstant(),
+                            endedAt = historic.endTime?.toInstant(),
+                            dueAt = historic.dueDate?.toInstant(),
                             priority = historic.priority,
+                            state = "archived",
                         ),
                     processInstanceId = historic.processInstanceId,
                     processDefinitionId = historic.processDefinitionId,
@@ -103,7 +86,7 @@ class FormedTaskService(
 
         val variables = resolveVariables(taskId, taskInfo.processInstanceId, form, isRuntime = runtime != null)
 
-        return FormedTaskResponse(taskDto, form, variables)
+        return FormedTask(taskDto, form, variables)
     }
 
     private fun resolveVariables(

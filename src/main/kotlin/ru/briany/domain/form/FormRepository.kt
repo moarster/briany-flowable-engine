@@ -9,6 +9,11 @@ interface FormRepository : JpaRepository<FormEntity, UUID> {
 
     fun findTopByKeyOrderByVersionDesc(key: String): FormEntity?
 
+    fun findTopByKeyAndVersion(
+        key: String,
+        version: Int,
+    ): FormEntity?
+
     fun findByDeploymentId(deploymentId: String): List<FormEntity>
 
     fun findTopByKeyAndTenantIdOrderByVersionDesc(

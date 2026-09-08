@@ -15,6 +15,16 @@ class FormController(
 ) : FormApi {
     override fun getForm(key: String): ResponseEntity<Form> = ResponseEntity.ok(formService.getForm(IdOrKey.parse(key)))
 
+    override fun getFormVersion(
+        key: String,
+        version: Int,
+    ): ResponseEntity<Form> = ResponseEntity.ok(formService.getForm(key, version))
+
+    override fun getFormVersions(
+        key: String,
+        pageable: Pageable,
+    ): ResponseEntity<FormSummaryPage> = ResponseEntity.ok(formService.listForms(VersionFilter.All, pageable))
+
     override fun listForms(pageable: Pageable): ResponseEntity<FormSummaryPage> =
         ResponseEntity.ok(formService.listForms(VersionFilter.Latest, pageable))
 }

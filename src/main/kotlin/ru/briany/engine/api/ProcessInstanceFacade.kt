@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import ru.briany.common.api.dtos.PagedList
 import ru.briany.common.api.params.StateFilter
+import ru.briany.generated.model.ProcessInstance
 import ru.briany.generated.model.ProcessInstancePage
 import ru.briany.generated.model.ProcessInstanceState
 import java.util.UUID
@@ -25,6 +26,18 @@ class ProcessInstanceFacade(
         stateFilter: StateFilter = StateFilter.All,
         pageable: Pageable,
     ): ProcessInstancePage = executeQuery(stateFilter, pageable) {}
+
+    // Runtime and historic instances are served from the same id, so a link keeps working
+    // after the instance ends. The history query returns both.
+    fun getProcessInstance(id: String): ProcessInstance {
+        val instance =
+            historyService
+                .createHistoricProcessInstanceQuery()
+                .processInstanceId(id)
+                .singleResult()
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Process instance not found: $id")
+        return ProcessInstanceMapper.from(instance)
+    }
 
     fun getApplicationProcessInstances(
         appId: UUID,

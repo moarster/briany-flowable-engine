@@ -17,7 +17,6 @@ import tools.jackson.databind.ObjectMapper
 import java.util.UUID
 
 @Service("brnFormService")
-@Transactional(readOnly = true)
 class FormService(
     private val formRepository: FormRepository,
     private val objectMapper: ObjectMapper,
@@ -108,6 +107,13 @@ class FormService(
                     ?: throw NoSuchElementException("Form not found: $idOrKey")
             }
         }
+
+    fun getForm(
+        key: String,
+        version: Int,
+    ): Form =
+        formRepository.findTopByKeyAndVersion(key, version)?.toResponse()
+            ?: throw NoSuchElementException("Form not found: $key")
 
     fun getFormByDeployment(
         deploymentId: String,

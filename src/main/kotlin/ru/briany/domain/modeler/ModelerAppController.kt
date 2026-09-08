@@ -25,15 +25,18 @@ class ModelerAppController(
     private val modelerAppDeployService: ModelerAppDeployService,
 ) : ModelerAppApi {
     override fun listModelerApps(
+        includeStats: Boolean,
         state: ModelerAppState?,
         pageable: Pageable,
-    ): ResponseEntity<ModelerAppPage> =
-        ResponseEntity.ok(modelerAppService.list(ModelerStateFilter.of(state), pageable))
+    ): ResponseEntity<ModelerAppPage> = ResponseEntity.ok(modelerAppService.list(ModelerStateFilter.of(state), pageable))
 
     override fun createModelerApp(createModelerAppRequest: CreateModelerAppRequest): ResponseEntity<ModelerApp> =
         ResponseEntity.status(HttpStatus.CREATED).body(modelerAppService.create(createModelerAppRequest))
 
-    override fun getModelerApp(key: String): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppService.get(key))
+    override fun getModelerApp(
+        key: String,
+        includeStats: Boolean,
+    ): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppService.get(key))
 
     override fun updateModelerApp(
         key: String,
@@ -45,11 +48,9 @@ class ModelerAppController(
         return ResponseEntity.noContent().build()
     }
 
-    override fun deployModelerApp(key: String): ResponseEntity<ModelerApp> =
-        ResponseEntity.ok(modelerAppDeployService.deploy(key))
+    override fun deployModelerApp(key: String): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppDeployService.deploy(key))
 
-    override fun undeployModelerApp(key: String): ResponseEntity<ModelerApp> =
-        ResponseEntity.ok(modelerAppDeployService.undeploy(key))
+    override fun undeployModelerApp(key: String): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppDeployService.undeploy(key))
 
     override fun listModelerAppFiles(key: String): ResponseEntity<List<ModelerAppFileSummary>> =
         ResponseEntity.ok(modelerAppService.listFiles(key))
