@@ -2,6 +2,7 @@ package ru.briany.workflow.task.formed
 
 import org.flowable.task.api.TaskInfo
 import ru.briany.generated.model.Task
+import ru.briany.generated.model.User
 import java.time.Instant
 
 /**
@@ -18,6 +19,7 @@ object TaskMapper {
     @Suppress("LongParameterList")
     fun toDto(
         task: TaskInfo,
+        assigneeUser: User?,
         state: String,
         endedAt: Instant?,
         processDefinitionKey: String?,
@@ -30,7 +32,7 @@ object TaskMapper {
             priority = task.priority,
             name = task.name,
             description = task.description,
-            assignee = task.assignee,
+            assignee = assigneeUser,
             processInstanceId = task.processInstanceId,
             processDefinitionId = task.processDefinitionId,
             processDefinitionKey = processDefinitionKey,

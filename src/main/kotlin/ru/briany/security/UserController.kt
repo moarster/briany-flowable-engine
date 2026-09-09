@@ -19,12 +19,17 @@ class UserController(
                 ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authenticated principal")
 
         val idmUser = idmIdentityService.createUserQuery().userId(userId).singleResult()
-        val groupIds = idmIdentityService.createGroupQuery().groupMember(userId).list().map { it.id }
+        val groupIds =
+            idmIdentityService
+                .createGroupQuery()
+                .groupMember(userId)
+                .list()
+                .map { it.id }
 
         return ResponseEntity.ok(
             User(
                 id = userId,
-                displayName = idmUser?.let { listOfNotNull(it.firstName, it.lastName).joinToString(" ").ifBlank { null } },
+                displayName = idmUser.displayName,
                 groupIds = groupIds,
             ),
         )

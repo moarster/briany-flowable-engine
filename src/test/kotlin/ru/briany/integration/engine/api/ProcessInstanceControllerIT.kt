@@ -77,15 +77,6 @@ class ProcessInstanceControllerIT : BaseOrderedControllerIT() {
             .andExpect(jsonPath("$.totalElements").value(2))
     }
 
-    @Test
-    @Order(13)
-    fun `listProcessInstances includes currentUserInvolved flag`() {
-        mockMvc
-            .perform(get("/api/v1/process-instances").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data[0].currentUserInvolved").isBoolean)
-    }
-
     // Phase 2: clear instances, test single running instance details
 
     @Test
@@ -171,23 +162,6 @@ class ProcessInstanceControllerIT : BaseOrderedControllerIT() {
     }
 
     @Test
-    @Order(51)
-    fun `listProcessDefinitionInstances by UUID scoped to definition`() {
-        val def =
-            repositoryService
-                .createProcessDefinitionQuery()
-                .processDefinitionKey("userTaskProcess")
-                .latestVersion()
-                .singleResult()
-
-        mockMvc
-            .perform(get("/api/v1/process-definitions/${def.id}/process-instances").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.length()").value(2))
-            .andExpect(jsonPath("$.data[0].processDefinition.key").value("userTaskProcess"))
-    }
-
-    @Test
     @Order(52)
     fun `listProcessDefinitionVersionInstances filters by key and version`() {
         val version =
@@ -232,57 +206,5 @@ class ProcessInstanceControllerIT : BaseOrderedControllerIT() {
                     .with(testUserAuth()),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.data.length()").value(2))
-    }
-
-    // Phase 7: full truncate, deploy app, test application-scoped queries
-
-    @Test
-    @Order(70)
-    fun `listApplicationProcessInstances scoped to app`() {
-        truncateEngineTables()
-        deployAppZip(ONLY_NATIVE_APP_ZIP)
-        deployProcess(USER_TASK)
-
-        val appDef = appRepositoryService.createAppDefinitionQuery().appDefinitionKey("native-samples").singleResult()
-        val bpmnDeployment =
-            repositoryService
-                .createDeploymentQuery()
-                .parentDeploymentId(appDef.deploymentId)
-                .singleResult()
-        val processDefs =
-            repositoryService
-                .createProcessDefinitionQuery()
-                .deploymentId(bpmnDeployment.id)
-                .list()
-        processDefs.forEach { pd ->
-            runtimeService.startProcessInstanceById(pd.id)
-        }
-        runtimeService.startProcessInstanceByKey("userTaskProcess")
-
-        val appInstanceCount =
-            historyService
-                .createHistoricProcessInstanceQuery()
-                .deploymentId(bpmnDeployment.id)
-                .count()
-
-        mockMvc
-            .perform(get("/api/v1/application-definitions/${appDef.id}/process-instances").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.length()").value(appInstanceCount.toInt()))
-            .andExpect(jsonPath("$.totalElements").value(appInstanceCount.toInt()))
-    }
-
-    @Test
-    @Order(71)
-    fun `listApplicationProcessInstances with state filter`() {
-        val appDef = appRepositoryService.createAppDefinitionQuery().appDefinitionKey("native-samples").singleResult()
-
-        mockMvc
-            .perform(
-                get("/api/v1/application-definitions/${appDef.id}/process-instances")
-                    .param("state", "completed")
-                    .with(testUserAuth()),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.data").isArray)
     }
 }

@@ -82,7 +82,7 @@ class SafeBpmnDeploymentValidator : ProcessLevelValidator() {
         errors: MutableList<ValidationError>,
     ) {
         process.findFlowElementsOfType(ScriptTask::class.java).forEach { task ->
-            checkScriptTaskLanguage(task, errors, process)
+            rejectScriptTask(task, errors, process)
         }
     }
 
@@ -306,21 +306,19 @@ class SafeBpmnDeploymentValidator : ProcessLevelValidator() {
 
     private fun isClassAllowed(className: String): Boolean = ALLOWED_CLASS_PREFIXES.any { className.startsWith(it) }
 
-    private fun checkScriptTaskLanguage(
+    // Script tasks are prohibited unconditionally: no scriptFormat is sandboxed, so any
+    // `<scriptTask>` is a deploy-time RCE vector regardless of language.
+    private fun rejectScriptTask(
         task: ScriptTask,
         errors: MutableList<ValidationError>,
         process: Process,
     ) {
-        val scriptFormat = task.scriptFormat?.trim()?.lowercase()
-        if (scriptFormat in ALLOWED_SCRIPT_FORMATS) return
-
         addError(
             errors,
             SCRIPT_LANGUAGE_ERROR_KEY,
             process,
             task,
-            "scriptTask:${task.id}: scriptFormat='${task.scriptFormat ?: ""}' not allowed " +
-                "(allowed: $ALLOWED_SCRIPT_FORMATS; no sandbox for other languages)",
+            "scriptTask:${task.id}: script tasks are prohibited in this environment",
         )
     }
 
@@ -386,11 +384,6 @@ class SafeBpmnDeploymentValidator : ProcessLevelValidator() {
         val ALLOWED_DELEGATE_BEANS: Set<String> =
             setOf(
                 "kvDelegate",
-            )
-
-        val ALLOWED_SCRIPT_FORMATS: Set<String> =
-            setOf(
-                "groovy",
             )
     }
 }

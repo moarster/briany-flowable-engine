@@ -2,6 +2,9 @@ package ru.briany.workflow.task.formed
 
 import org.flowable.engine.HistoryService
 import org.flowable.engine.TaskService
+import org.flowable.idm.api.IdmIdentityService
+import org.flowable.idm.api.User
+import org.flowable.idm.api.UserQuery
 import org.flowable.task.api.Task
 import org.flowable.task.api.TaskQuery
 import org.flowable.task.api.history.HistoricTaskInstance
@@ -21,9 +24,11 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
+import ru.briany.common.api.ApiProblemException
 import ru.briany.domain.form.FormService
 import ru.briany.generated.model.Form
 import ru.briany.generated.model.FormSchema
+import tools.jackson.databind.JsonNode
 import tools.jackson.databind.json.JsonMapper
 import java.time.Instant
 import java.util.Date
@@ -39,6 +44,9 @@ class FormedTaskServiceTest {
     @Mock
     private lateinit var formService: FormService
 
+    @Mock
+    private lateinit var idmIdentityService: IdmIdentityService
+
     private val objectMapper = JsonMapper.builder().build()
 
     private lateinit var service: FormedTaskService
@@ -46,7 +54,22 @@ class FormedTaskServiceTest {
     @BeforeEach
     fun setUp() {
         MockitoAnnotations.openMocks(this)
-        service = FormedTaskService(taskService, historyService, formService, objectMapper)
+        service = FormedTaskService(taskService, historyService, formService, objectMapper, idmIdentityService)
+        stubUserLookup()
+    }
+
+    // resolveUser runs for every task (assignee -> User) before the formKey check, so all
+    // task stubs carry an assignee and this returns a matching IDM user for any userId.
+    private fun stubUserLookup() {
+        val user =
+            mock<User> {
+                on { getId() } doReturn "u1"
+                on { displayName } doReturn "User One"
+            }
+        val uq = Mockito.mock(UserQuery::class.java)
+        whenever(idmIdentityService.createUserQuery()).thenReturn(uq)
+        whenever(uq.userId(ArgumentMatchers.anyString())).thenReturn(uq)
+        whenever(uq.singleResult()).thenReturn(user)
     }
 
     @Test
@@ -59,9 +82,9 @@ class FormedTaskServiceTest {
 
         val result = service.getFormedTask("task-1")
 
-        Assertions.assertNull(result.task.endTime)
-        Assertions.assertEquals(true, result.variables["approved"]?.asBoolean())
-        Assertions.assertEquals(1000, result.variables["amount"]?.asInt())
+        Assertions.assertNull(result.task.endedAt)
+        Assertions.assertEquals(true, (result.variables["approved"] as JsonNode).asBoolean())
+        Assertions.assertEquals(1000, (result.variables["amount"] as JsonNode).asInt())
         Assertions.assertNull(result.variables["internal"])
 
         Mockito.verify(formService).getFormByDeploymentWithFallback("procDef-1", "myForm")
@@ -73,6 +96,7 @@ class FormedTaskServiceTest {
         val historic =
             mock<HistoricTaskInstance> {
                 on { id } doReturn "task-2"
+                on { assignee } doReturn "u1"
                 on { formKey } doReturn "histForm"
                 on { processInstanceId } doReturn "proc-2"
                 on { processDefinitionId } doReturn "procDef-2"
@@ -85,9 +109,9 @@ class FormedTaskServiceTest {
 
         val result = service.getFormedTask("task-2")
 
-        Assertions.assertNotNull(result.task.endTime)
+        Assertions.assertNotNull(result.task.endedAt)
         Assertions.assertEquals("task-2", result.task.id)
-        Assertions.assertEquals(42, result.variables["score"]?.asInt())
+        Assertions.assertEquals(42, (result.variables["score"] as JsonNode).asInt())
     }
 
     @Test
@@ -103,10 +127,12 @@ class FormedTaskServiceTest {
     }
 
     @Test
-    fun `getFormedTask - throws when task has no formKey`() {
+    fun `getFormedTask - throws TASK_HAS_NO_FORM problem when task has no formKey`() {
         stubRuntimeTask("task-3", formKey = null, processInstanceId = "proc-3", processDefinitionId = "procDef-3")
 
-        assertThrows<IllegalStateException> { service.getFormedTask("task-3") }
+        val ex = assertThrows<ApiProblemException> { service.getFormedTask("task-3") }
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, ex.status)
+        Assertions.assertEquals("TASK_HAS_NO_FORM", ex.code)
         Mockito.verifyNoInteractions(formService)
     }
 
@@ -136,7 +162,7 @@ class FormedTaskServiceTest {
 
         val result = service.getFormedTask("task-5")
 
-        Assertions.assertEquals(1, result.variables["x"]?.asInt())
+        Assertions.assertEquals(1, (result.variables["x"] as JsonNode).asInt())
         Mockito.verify(formService).getFormByDeploymentWithFallback(null, "someForm")
     }
 
@@ -161,6 +187,7 @@ class FormedTaskServiceTest {
         val task =
             mock<Task> {
                 on { getId() } doReturn id
+                on { getAssignee() } doReturn "u1"
                 on { getFormKey() } doReturn formKey
                 on { getProcessInstanceId() } doReturn processInstanceId
                 on { getProcessDefinitionId() } doReturn processDefinitionId

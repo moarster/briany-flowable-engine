@@ -14,6 +14,7 @@ testcontainers = "2.0.5"
 [libraries]
 camunda-feel = { module = "org.camunda.feel:feel-engine", version.ref = "camunda-feel" }
 flowable-starter = { module = "org.flowable:flowable-spring-boot-starter", version.ref = "flowable" }
+flowable-job = { module = "org.flowable:flowable-external-job-rest", version.ref = "flowable" }
 jackson-kotlin = { module = "tools.jackson.module:jackson-module-kotlin" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }

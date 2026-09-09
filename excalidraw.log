@@ -675,3 +675,381 @@
 2026-09-07 12:28:30.166 [info] MCP transport closed — shutting down
 2026-09-07 12:28:30.175 [info] MCP transport closed — shutting down
 2026-09-07 12:28:30.184 [info] MCP transport closed — shutting down
+2026-09-07 15:25:41.606 [info] Starting Excalidraw MCP server...
+2026-09-07 15:25:41.598 [info] Starting Excalidraw MCP server...
+2026-09-07 15:25:41.610 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:25:41.612 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:25:41.612 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:25:41.610 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:25:41.613 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:25:41.613 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:25:41.634 [warn] Ignoring EADDRINUSE in global handler (canvas server will reuse existing instance)
+2026-09-07 15:25:41.633 [info] Canvas server running on http://localhost:3000
+2026-09-07 15:25:41.634 [info] WebSocket server running on ws://localhost:3000
+2026-09-07 15:25:41.634 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 15:25:41.634 [debug] Connecting to stdio transport...
+2026-09-07 15:25:41.634 [info] Excalidraw MCP server running on stdio
+2026-09-07 15:25:41.645 [info] Listing available tools
+2026-09-07 15:25:41.954 [info] Starting Excalidraw MCP server...
+2026-09-07 15:25:41.957 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:25:41.958 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:25:41.958 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:25:41.989 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-07 15:25:41.989 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 15:25:41.989 [debug] Connecting to stdio transport...
+2026-09-07 15:25:41.989 [info] Excalidraw MCP server running on stdio
+2026-09-07 15:25:41.998 [info] Listing available tools
+2026-09-07 15:25:42.683 [info] Starting Excalidraw MCP server...
+2026-09-07 15:25:42.687 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:25:42.688 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:25:42.688 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:25:42.712 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-07 15:25:42.712 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 15:25:42.712 [debug] Connecting to stdio transport...
+2026-09-07 15:25:42.713 [info] Excalidraw MCP server running on stdio
+2026-09-07 15:25:42.722 [info] Listing available tools
+2026-09-07 15:25:44.099 [info] MCP transport closed — shutting down
+2026-09-07 15:25:44.476 [info] Starting Excalidraw MCP server...
+2026-09-07 15:25:44.480 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:25:44.481 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:25:44.481 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:25:44.506 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-07 15:25:44.506 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 15:25:44.506 [debug] Connecting to stdio transport...
+2026-09-07 15:25:44.507 [info] Excalidraw MCP server running on stdio
+2026-09-07 15:25:44.521 [info] Listing available tools
+2026-09-07 15:25:46.820 [info] MCP transport closed — shutting down
+2026-09-07 15:25:50.001 [info] MCP transport closed — shutting down
+2026-09-07 15:25:53.267 [info] MCP transport closed — shutting down
+2026-09-07 15:26:04.076 [info] Starting Excalidraw MCP server...
+2026-09-07 15:26:04.080 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 15:26:04.081 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 15:26:04.081 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 15:26:04.101 [info] Canvas server running on http://localhost:3000
+2026-09-07 15:26:04.101 [info] WebSocket server running on ws://localhost:3000
+2026-09-07 15:26:04.101 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 15:26:04.101 [debug] Connecting to stdio transport...
+2026-09-07 15:26:04.102 [info] Excalidraw MCP server running on stdio
+2026-09-07 15:26:04.117 [info] Listing available tools
+2026-09-07 19:37:05.157 [info] MCP transport closed — shutting down
+2026-09-07 19:37:06.269 [info] Starting Excalidraw MCP server...
+2026-09-07 19:37:06.272 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 19:37:06.272 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 19:37:06.273 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 19:37:06.287 [info] Canvas server running on http://localhost:3000
+2026-09-07 19:37:06.287 [info] WebSocket server running on ws://localhost:3000
+2026-09-07 19:37:06.288 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 19:37:06.288 [debug] Connecting to stdio transport...
+2026-09-07 19:37:06.288 [info] Excalidraw MCP server running on stdio
+2026-09-07 19:37:06.295 [info] Listing available tools
+2026-09-07 19:39:19.500 [info] Starting Excalidraw MCP server...
+2026-09-07 19:39:19.503 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 19:39:19.504 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 19:39:19.504 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 19:39:19.525 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-07 19:39:19.526 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 19:39:19.526 [debug] Connecting to stdio transport...
+2026-09-07 19:39:19.526 [info] Excalidraw MCP server running on stdio
+2026-09-07 19:39:19.534 [info] Listing available tools
+2026-09-07 19:42:08.215 [info] Starting Excalidraw MCP server...
+2026-09-07 19:42:08.218 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 19:42:08.219 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 19:42:08.219 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 19:42:08.235 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-07 19:42:08.236 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 19:42:08.236 [debug] Connecting to stdio transport...
+2026-09-07 19:42:08.236 [info] Excalidraw MCP server running on stdio
+2026-09-07 19:42:08.244 [info] Listing available tools
+2026-09-07 20:01:02.512 [info] MCP transport closed — shutting down
+2026-09-07 20:01:03.762 [info] Starting Excalidraw MCP server...
+2026-09-07 20:01:03.764 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-07 20:01:03.765 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-07 20:01:03.765 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-07 20:01:03.778 [info] Canvas server running on http://localhost:3000
+2026-09-07 20:01:03.778 [info] WebSocket server running on ws://localhost:3000
+2026-09-07 20:01:03.778 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-07 20:01:03.779 [debug] Connecting to stdio transport...
+2026-09-07 20:01:03.779 [info] Excalidraw MCP server running on stdio
+2026-09-07 20:01:03.788 [info] Listing available tools
+2026-09-07 20:14:18.028 [info] MCP transport closed — shutting down
+2026-09-07 20:23:58.482 [info] MCP transport closed — shutting down
+2026-09-07 20:23:58.491 [info] MCP transport closed — shutting down
+2026-09-08 12:57:17.121 [info] Starting Excalidraw MCP server...
+2026-09-08 12:57:17.119 [info] Starting Excalidraw MCP server...
+2026-09-08 12:57:17.127 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 12:57:17.130 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 12:57:17.130 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 12:57:17.128 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 12:57:17.130 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 12:57:17.130 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 12:57:17.166 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 12:57:17.167 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 12:57:17.166 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 12:57:17.167 [debug] Connecting to stdio transport...
+2026-09-08 12:57:17.167 [info] Excalidraw MCP server running on stdio
+2026-09-08 12:57:17.168 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 12:57:17.168 [debug] Connecting to stdio transport...
+2026-09-08 12:57:17.168 [info] Excalidraw MCP server running on stdio
+2026-09-08 12:57:17.183 [info] Listing available tools
+2026-09-08 12:57:17.188 [info] Listing available tools
+2026-09-08 12:57:31.074 [info] Starting Excalidraw MCP server...
+2026-09-08 12:57:31.082 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 12:57:31.083 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 12:57:31.083 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 12:57:31.113 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 12:57:31.113 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 12:57:31.113 [debug] Connecting to stdio transport...
+2026-09-08 12:57:31.113 [info] Excalidraw MCP server running on stdio
+2026-09-08 12:57:31.128 [info] Listing available tools
+2026-09-08 13:00:47.474 [info] Starting Excalidraw MCP server...
+2026-09-08 13:00:47.477 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 13:00:47.478 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 13:00:47.478 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 13:00:47.496 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 13:00:47.496 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 13:00:47.497 [debug] Connecting to stdio transport...
+2026-09-08 13:00:47.497 [info] Excalidraw MCP server running on stdio
+2026-09-08 13:00:47.505 [info] Listing available tools
+2026-09-08 13:08:36.811 [info] MCP transport closed — shutting down
+2026-09-08 13:08:38.736 [info] Starting Excalidraw MCP server...
+2026-09-08 13:08:38.739 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 13:08:38.740 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 13:08:38.740 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 13:08:38.758 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 13:08:38.758 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 13:08:38.758 [debug] Connecting to stdio transport...
+2026-09-08 13:08:38.759 [info] Excalidraw MCP server running on stdio
+2026-09-08 13:08:38.767 [info] Listing available tools
+2026-09-08 13:37:13.462 [info] MCP transport closed — shutting down
+2026-09-08 13:37:13.952 [info] MCP transport closed — shutting down
+2026-09-08 14:29:20.189 [info] Starting Excalidraw MCP server...
+2026-09-08 14:29:20.198 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 14:29:20.199 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 14:29:20.199 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 14:29:20.228 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 14:29:20.228 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 14:29:20.228 [debug] Connecting to stdio transport...
+2026-09-08 14:29:20.229 [info] Excalidraw MCP server running on stdio
+2026-09-08 14:29:20.243 [info] Listing available tools
+2026-09-08 14:30:32.069 [info] Starting Excalidraw MCP server...
+2026-09-08 14:30:32.073 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 14:30:32.073 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 14:30:32.073 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 14:30:32.093 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 14:30:32.093 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 14:30:32.093 [debug] Connecting to stdio transport...
+2026-09-08 14:30:32.093 [info] Excalidraw MCP server running on stdio
+2026-09-08 14:30:32.104 [info] Listing available tools
+2026-09-08 14:31:12.663 [info] Starting Excalidraw MCP server...
+2026-09-08 14:31:12.668 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 14:31:12.669 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 14:31:12.669 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 14:31:12.691 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 14:31:12.692 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 14:31:12.692 [debug] Connecting to stdio transport...
+2026-09-08 14:31:12.692 [info] Excalidraw MCP server running on stdio
+2026-09-08 14:31:12.702 [info] Listing available tools
+2026-09-08 14:31:19.255 [info] MCP transport closed — shutting down
+2026-09-08 14:31:25.541 [info] MCP transport closed — shutting down
+2026-09-08 14:46:48.196 [info] MCP transport closed — shutting down
+2026-09-08 14:46:49.465 [info] Starting Excalidraw MCP server...
+2026-09-08 14:46:49.468 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 14:46:49.469 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 14:46:49.469 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 14:46:49.492 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 14:46:49.492 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 14:46:49.492 [debug] Connecting to stdio transport...
+2026-09-08 14:46:49.492 [info] Excalidraw MCP server running on stdio
+2026-09-08 14:46:49.501 [info] Listing available tools
+2026-09-08 15:04:17.102 [info] MCP transport closed — shutting down
+2026-09-08 15:17:52.934 [info] MCP transport closed — shutting down
+2026-09-08 15:17:54.857 [info] Starting Excalidraw MCP server...
+2026-09-08 15:17:54.862 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 15:17:54.863 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 15:17:54.864 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 15:17:54.898 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 15:17:54.898 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 15:17:54.898 [debug] Connecting to stdio transport...
+2026-09-08 15:17:54.899 [info] Excalidraw MCP server running on stdio
+2026-09-08 15:17:54.909 [info] Listing available tools
+2026-09-08 15:18:23.674 [info] Starting Excalidraw MCP server...
+2026-09-08 15:18:23.678 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 15:18:23.679 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 15:18:23.679 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 15:18:23.701 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 15:18:23.701 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 15:18:23.701 [debug] Connecting to stdio transport...
+2026-09-08 15:18:23.702 [info] Excalidraw MCP server running on stdio
+2026-09-08 15:18:23.712 [info] Listing available tools
+2026-09-08 15:46:11.002 [info] MCP transport closed — shutting down
+2026-09-08 15:54:17.125 [info] MCP transport closed — shutting down
+2026-09-08 18:26:32.346 [info] MCP transport closed — shutting down
+2026-09-08 18:33:54.558 [info] Starting Excalidraw MCP server...
+2026-09-08 18:33:54.566 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 18:33:54.567 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 18:33:54.568 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 18:33:54.591 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 18:33:54.591 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 18:33:54.591 [debug] Connecting to stdio transport...
+2026-09-08 18:33:54.592 [info] Excalidraw MCP server running on stdio
+2026-09-08 18:33:54.606 [info] Listing available tools
+2026-09-08 18:33:54.780 [info] Starting Excalidraw MCP server...
+2026-09-08 18:33:54.788 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 18:33:54.790 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 18:33:54.790 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 18:33:54.831 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 18:33:54.831 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 18:33:54.831 [debug] Connecting to stdio transport...
+2026-09-08 18:33:54.832 [info] Excalidraw MCP server running on stdio
+2026-09-08 18:33:54.854 [info] Listing available tools
+2026-09-08 18:54:40.423 [info] MCP transport closed — shutting down
+2026-09-08 18:54:40.423 [info] MCP transport closed — shutting down
+2026-09-08 19:19:22.214 [info] Starting Excalidraw MCP server...
+2026-09-08 19:19:22.222 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:19:22.223 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:19:22.224 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:19:22.220 [info] Starting Excalidraw MCP server...
+2026-09-08 19:19:22.225 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:19:22.227 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:19:22.227 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:19:22.256 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:19:22.256 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:19:22.256 [debug] Connecting to stdio transport...
+2026-09-08 19:19:22.257 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:19:22.260 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:19:22.261 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:19:22.261 [debug] Connecting to stdio transport...
+2026-09-08 19:19:22.262 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:19:22.268 [info] Listing available tools
+2026-09-08 19:19:22.273 [info] Listing available tools
+2026-09-08 19:19:25.835 [info] MCP transport closed — shutting down
+2026-09-08 19:19:25.835 [info] MCP transport closed — shutting down
+2026-09-08 19:30:17.988 [info] Starting Excalidraw MCP server...
+2026-09-08 19:30:17.994 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:30:17.996 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:30:17.996 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:30:18.068 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:30:18.072 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:30:18.072 [debug] Connecting to stdio transport...
+2026-09-08 19:30:18.073 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:30:18.095 [info] Listing available tools
+2026-09-08 19:30:18.162 [info] Starting Excalidraw MCP server...
+2026-09-08 19:30:18.166 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:30:18.167 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:30:18.167 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:30:18.189 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:30:18.189 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:30:18.190 [debug] Connecting to stdio transport...
+2026-09-08 19:30:18.190 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:30:18.202 [info] Listing available tools
+2026-09-08 19:30:27.911 [info] Starting Excalidraw MCP server...
+2026-09-08 19:30:27.914 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:30:27.915 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:30:27.915 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:30:27.933 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:30:27.934 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:30:27.934 [debug] Connecting to stdio transport...
+2026-09-08 19:30:27.934 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:30:27.942 [info] Listing available tools
+2026-09-08 19:43:56.724 [info] Starting Excalidraw MCP server...
+2026-09-08 19:43:56.727 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:43:56.728 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:43:56.728 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:43:56.751 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:43:56.751 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:43:56.751 [debug] Connecting to stdio transport...
+2026-09-08 19:43:56.752 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:43:56.762 [info] Listing available tools
+2026-09-08 19:46:23.693 [info] Starting Excalidraw MCP server...
+2026-09-08 19:46:23.696 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 19:46:23.697 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 19:46:23.697 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 19:46:23.715 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 19:46:23.715 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 19:46:23.715 [debug] Connecting to stdio transport...
+2026-09-08 19:46:23.715 [info] Excalidraw MCP server running on stdio
+2026-09-08 19:46:23.724 [info] Listing available tools
+2026-09-08 20:04:39.102 [info] Starting Excalidraw MCP server...
+2026-09-08 20:04:39.106 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 20:04:39.107 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 20:04:39.107 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 20:04:39.127 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 20:04:39.127 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 20:04:39.127 [debug] Connecting to stdio transport...
+2026-09-08 20:04:39.127 [info] Excalidraw MCP server running on stdio
+2026-09-08 20:04:39.137 [info] Listing available tools
+2026-09-08 20:04:57.242 [info] Starting Excalidraw MCP server...
+2026-09-08 20:04:57.245 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-08 20:04:57.246 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-08 20:04:57.246 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-08 20:04:57.268 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-08 20:04:57.268 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-08 20:04:57.268 [debug] Connecting to stdio transport...
+2026-09-08 20:04:57.269 [info] Excalidraw MCP server running on stdio
+2026-09-08 20:04:57.279 [info] Listing available tools
+2026-09-08 20:05:15.684 [info] MCP transport closed — shutting down
+2026-09-08 20:23:54.635 [info] MCP transport closed — shutting down
+2026-09-08 20:59:37.556 [info] MCP transport closed — shutting down
+2026-09-08 20:59:56.162 [info] MCP transport closed — shutting down
+2026-09-08 20:59:56.178 [info] MCP transport closed — shutting down
+2026-09-08 20:59:56.188 [info] MCP transport closed — shutting down
+2026-09-08 20:59:56.196 [info] MCP transport closed — shutting down
+2026-09-09 08:40:51.830 [info] Starting Excalidraw MCP server...
+2026-09-09 08:40:51.836 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 08:40:51.838 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 08:40:51.839 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 08:40:51.867 [info] Canvas server running on http://localhost:3000
+2026-09-09 08:40:51.867 [info] WebSocket server running on ws://localhost:3000
+2026-09-09 08:40:51.867 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 08:40:51.867 [debug] Connecting to stdio transport...
+2026-09-09 08:40:51.868 [info] Excalidraw MCP server running on stdio
+2026-09-09 08:40:51.886 [info] Listing available tools
+2026-09-09 08:40:52.467 [info] Starting Excalidraw MCP server...
+2026-09-09 08:40:52.469 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 08:40:52.470 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 08:40:52.470 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 08:40:52.495 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-09 08:40:52.495 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 08:40:52.495 [debug] Connecting to stdio transport...
+2026-09-09 08:40:52.495 [info] Excalidraw MCP server running on stdio
+2026-09-09 08:40:52.503 [info] Listing available tools
+2026-09-09 08:42:49.821 [info] Starting Excalidraw MCP server...
+2026-09-09 08:42:49.824 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 08:42:49.825 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 08:42:49.825 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 08:42:49.841 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-09 08:42:49.842 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 08:42:49.842 [debug] Connecting to stdio transport...
+2026-09-09 08:42:49.842 [info] Excalidraw MCP server running on stdio
+2026-09-09 08:42:49.849 [info] Listing available tools
+2026-09-09 09:03:53.316 [info] MCP transport closed — shutting down
+2026-09-09 09:27:17.484 [info] Starting Excalidraw MCP server...
+2026-09-09 09:27:17.486 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 09:27:17.487 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 09:27:17.487 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 09:27:17.504 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-09 09:27:17.504 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 09:27:17.504 [debug] Connecting to stdio transport...
+2026-09-09 09:27:17.504 [info] Excalidraw MCP server running on stdio
+2026-09-09 09:27:17.511 [info] Listing available tools
+2026-09-09 09:35:20.028 [info] MCP transport closed — shutting down
+2026-09-09 09:35:36.858 [info] Starting Excalidraw MCP server...
+2026-09-09 09:35:36.862 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 09:35:36.863 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 09:35:36.863 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 09:35:36.881 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-09 09:35:36.881 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 09:35:36.881 [debug] Connecting to stdio transport...
+2026-09-09 09:35:36.881 [info] Excalidraw MCP server running on stdio
+2026-09-09 09:35:36.890 [info] Listing available tools
+2026-09-09 09:42:21.140 [info] Starting Excalidraw MCP server...
+2026-09-09 09:42:21.143 [info] SQLite database initialized at /home/ivan/.excalidraw-mcp/excalidraw.db
+2026-09-09 09:42:21.143 [info] Active tenant set to "aeebfc98e39f", active project: "aeebfc98e39f-default"
+2026-09-09 09:42:21.144 [info] Tenant initialized: "briany-flowable-engine" (aeebfc98e39f) from /home/ivan/Projects/Briany/briany-flowable-engine
+2026-09-09 09:42:21.160 [info] Reusing existing canvas server on port 3000 (elements: 0, ws clients: 0)
+2026-09-09 09:42:21.160 [info] Canvas server started — lifecycle managed by MCP process
+2026-09-09 09:42:21.160 [debug] Connecting to stdio transport...
+2026-09-09 09:42:21.160 [info] Excalidraw MCP server running on stdio
+2026-09-09 09:42:21.167 [info] Listing available tools
+2026-09-09 09:55:50.182 [info] MCP transport closed — shutting down
+2026-09-09 10:10:50.783 [info] MCP transport closed — shutting down

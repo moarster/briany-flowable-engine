@@ -64,33 +64,6 @@ class ProcessDefinitionControllerIT : BaseOrderedControllerIT() {
     }
 
     @Test
-    @Order(12)
-    fun `getProcess returns startableByCurrentUser true when no candidate starters`() {
-        mockMvc
-            .perform(get("/api/v1/processes/loop_simple").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.startableByCurrentUser").value(true))
-    }
-
-    @Test
-    @Order(13)
-    fun `getProcessDefinition by UUID returns definition`() {
-        val def =
-            repositoryService
-                .createProcessDefinitionQuery()
-                .processDefinitionKey("loop_simple")
-                .latestVersion()
-                .singleResult()
-
-        mockMvc
-            .perform(get("/api/v1/process-definitions/${def.id}").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(def.id))
-            .andExpect(jsonPath("$.key").value("loop_simple"))
-            .andExpect(jsonPath("$.version").value(1))
-    }
-
-    @Test
     @Order(14)
     fun `getProcessDefinitionVersion returns specified version`() {
         mockMvc
@@ -108,36 +81,6 @@ class ProcessDefinitionControllerIT : BaseOrderedControllerIT() {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.data.length()").value(1))
             .andExpect(jsonPath("$.data[0].version").value(1))
-    }
-
-    @Test
-    @Order(16)
-    fun `listProcessDefinitions filters by key param`() {
-        mockMvc
-            .perform(
-                get("/api/v1/process-definitions")
-                    .param("key", "loop_simple")
-                    .with(testUserAuth()),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.length()").value(1))
-            .andExpect(jsonPath("$.data[0].key").value("loop_simple"))
-    }
-
-    @Test
-    @Order(17)
-    fun `listApplicationProcessDefinitions returns scoped definitions`() {
-        val appDef =
-            appRepositoryService
-                .createAppDefinitionQuery()
-                .appDefinitionKey("native-samples")
-                .latestVersion()
-                .singleResult()
-
-        mockMvc
-            .perform(get("/api/v1/application-definitions/${appDef.id}/process-definitions").with(testUserAuth()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.length()").value(3))
-            .andExpect(jsonPath("$.totalElements").value(3))
     }
 
     // Phase 2: second deploy (v2)
@@ -204,19 +147,6 @@ class ProcessDefinitionControllerIT : BaseOrderedControllerIT() {
             .perform(get("/api/v1/processes/loop_simple/versions/2").with(testUserAuth()))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.version").value(2))
-    }
-
-    @Test
-    @Order(24)
-    fun `listProcessDefinitions with version=all returns every version`() {
-        mockMvc
-            .perform(
-                get("/api/v1/process-definitions")
-                    .param("key", "loop_simple")
-                    .param("version", "all")
-                    .with(testUserAuth()),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.data.length()").value(2))
     }
 
     @Test

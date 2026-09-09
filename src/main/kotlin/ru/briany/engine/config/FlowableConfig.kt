@@ -32,7 +32,7 @@ class FlowableConfig(
     @PostConstruct
     fun configureProcessEngine() {
         if (whitelistConfig.whitelist.enabled) {
-            processEngineConfiguration.activityBehaviorFactory = CustomActivityBehaviorFactory(whitelistConfig)
+            processEngineConfiguration.activityBehaviorFactory = CustomActivityBehaviorFactory()
             log.info(
                 "Activity whitelist is enabled with allowed activities: {}." +
                     " Using custom ActivityBehaviorFactory",

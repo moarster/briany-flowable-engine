@@ -17,6 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtTimestampValidator
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +27,7 @@ class SecurityConfig(
     private val securityProperties: SecurityProperties,
 ) {
     @Bean
-    fun authenticationFilterBean(strategy: AuthenticationStrategy): AuthenticationFilter =
+    fun authenticationFilterBean(strategy: AuthenticationStrategy?): AuthenticationFilter =
         AuthenticationFilter(
             strategy,
         )
@@ -67,18 +70,42 @@ class SecurityConfig(
         return decoder
     }
 
+    /**
+     * CORS for the `/api/` chain, driven by `briany.security.cors.allowed-origins`. When empty
+     * (the default) no mapping is registered, so behavior stays same-origin only. Uses
+     * `allowedOriginPatterns` so wildcard entries remain valid alongside `allowCredentials`.
+     */
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val source = UrlBasedCorsConfigurationSource()
+        val origins = securityProperties.cors.allowedOrigins
+        if (origins.isNotEmpty()) {
+            val cfg =
+                CorsConfiguration().apply {
+                    allowedOriginPatterns = origins
+                    allowedMethods = securityProperties.cors.allowedMethods
+                    allowedHeaders = securityProperties.cors.allowedHeaders
+                    allowCredentials = true
+                }
+            source.registerCorsConfiguration("/api/**", cfg)
+        }
+        return source
+    }
+
     @Bean
     @Order(9) // Before Flowable's IDM security (IDM_API_SECURITY_ORDER was 10)
     fun filterChain(
         http: HttpSecurity,
         authenticationFilter: AuthenticationFilter,
+        corsConfigurationSource: CorsConfigurationSource,
     ): SecurityFilterChain {
         // Applies only to these paths; /actuator/** and other Flowable-managed paths
         // are left to their own configuration.
         return http
             .securityMatcher(
                 "/api/**",
-            ).csrf { it.disable() } // CSRF is irrelevant for a stateless API
+            ).cors { it.configurationSource(corsConfigurationSource) }
+            .csrf { it.disable() } // CSRF is irrelevant for a stateless API
             .sessionManagement {
                 it.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS,

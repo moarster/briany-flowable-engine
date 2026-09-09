@@ -78,6 +78,7 @@ dependencies {
 
     // Flowable
     implementation(libs.flowable.starter)
+    implementation(libs.flowable.job)
 
     // Observability
     // implementation(libs.bundles.observability)
@@ -150,14 +151,8 @@ openApiGenerate {
     apiPackage.set("ru.briany.generated.api")
     modelPackage.set("ru.briany.generated.model")
     invokerPackage.set("ru.briany.generated.invoker")
-//    globalProperties.set(
-//        mapOf(
-//            "apis" to "Application,ProcessDefinition,ProcessInstance,Form",
-//            "models" to "",
-//        ),
-//    )
     typeMappings.set(
-        mapOf("DateTime" to "Instant", "BpmnElementPropertyValue" to "Any"),
+        mapOf("DateTime" to "Instant", "BpmnElementPropertyValue" to "Any", "TaskState" to "kotlin.String"),
     )
     importMappings.set(
         mapOf("Instant" to "java.time.Instant", "Any" to "kotlin.Any"),

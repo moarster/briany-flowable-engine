@@ -1,17 +1,23 @@
 package ru.briany.domain.modeler
 
+import org.flowable.bpmn.converter.BpmnXMLConverter
 import org.flowable.common.engine.api.FlowableException
+import org.flowable.common.engine.api.io.InputStreamProvider
+import org.flowable.validation.ProcessValidator
+import org.flowable.validation.ValidationError as EngineValidationError
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import ru.briany.common.api.ApiProblemException
 import ru.briany.generated.model.Application
 import ru.briany.generated.model.ModelerApp
 import ru.briany.generated.model.ModelerAppState
 import ru.briany.generated.model.ModelerFileError
 import ru.briany.generated.model.ModelerFileErrorSeverity
 import ru.briany.generated.model.ModelerFileType
+import ru.briany.generated.model.ValidationError
 import ru.briany.workflow.application.DeploymentService
 import tools.jackson.databind.ObjectMapper
 import java.time.Instant
@@ -27,14 +33,17 @@ class ModelerAppDeployService(
     private val deploymentService: DeploymentService,
     private val modelerAppService: ModelerAppService,
     private val objectMapper: ObjectMapper,
+    private val brianyProcessValidator: ProcessValidator,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
+    private val bpmnConverter = BpmnXMLConverter()
 
     @Transactional
     fun deploy(key: String): ModelerApp {
         val app = modelerAppService.requireApp(key)
         val files = fileRepository.findByAppId(app.id)
         guardDeployable(key, files)
+        preValidate(files)
         val application = runDeploy(app, files)
         linkResources(application, files)
         markDeployed(app, files, application)
@@ -89,8 +98,50 @@ class ModelerAppDeployService(
             deploymentService.deploy(app.key, flwFiles, bformFiles)
         } catch (ex: FlowableException) {
             log.warn("Engine deployment failed for modeler app '{}': {}", app.key, ex.message)
-            throw ResponseStatusException(HttpStatus.CONFLICT, "Engine deployment failed: ${ex.message}", ex)
+            val message = ex.message ?: "Engine deployment failed"
+            throw ApiProblemException(
+                status = HttpStatus.CONFLICT,
+                detail = message,
+                code = "DEPLOY_FAILED",
+                errors = listOf(ValidationError(field = app.key, message = message)),
+            )
         }
+    }
+
+    /**
+     * Runs the engine's own [ProcessValidator] over each BPMN source before the deploy call, so a
+     * disallowed construct surfaces as a structured [ApiProblemException] the client can map onto
+     * files and diagram elements, rather than a flat 409 message. Each error's `field` is the
+     * modeler file key, suffixed with `#<activityId>` when the engine reports one.
+     */
+    private fun preValidate(files: List<ModelerAppFileEntity>) {
+        val errors =
+            files
+                .filter { it.type == ModelerFileType.BPMN }
+                .flatMap { file -> validateFile(file) }
+        if (errors.isNotEmpty()) {
+            throw ApiProblemException(
+                status = HttpStatus.CONFLICT,
+                detail = "Deployment validation failed",
+                code = "DEPLOY_VALIDATION_FAILED",
+                errors = errors,
+            )
+        }
+    }
+
+    private fun validateFile(file: ModelerAppFileEntity): List<ValidationError> {
+        val provider = InputStreamProvider { file.content.inputStream() }
+        val model = bpmnConverter.convertToBpmnModel(provider, false, false)
+        return brianyProcessValidator.validate(model).map { toValidationError(file, it) }
+    }
+
+    private fun toValidationError(
+        file: ModelerAppFileEntity,
+        error: EngineValidationError,
+    ): ValidationError {
+        val field = error.activityId?.takeIf { it.isNotBlank() }?.let { "${file.fileKey}#$it" } ?: file.fileKey
+        val message = error.defaultDescription ?: error.problem ?: "Validation error"
+        return ValidationError(field = field, message = message)
     }
 
     private fun linkResources(

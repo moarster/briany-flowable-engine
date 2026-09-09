@@ -23,12 +23,14 @@ import ru.briany.generated.model.UpdateModelerAppRequest
 class ModelerAppController(
     private val modelerAppService: ModelerAppService,
     private val modelerAppDeployService: ModelerAppDeployService,
+    private val modelerAppStatsService: ModelerAppStatsService,
 ) : ModelerAppApi {
     override fun listModelerApps(
         includeStats: Boolean,
         state: ModelerAppState?,
         pageable: Pageable,
-    ): ResponseEntity<ModelerAppPage> = ResponseEntity.ok(modelerAppService.list(ModelerStateFilter.of(state), pageable))
+    ): ResponseEntity<ModelerAppPage> =
+        ResponseEntity.ok(modelerAppStatsService.list(ModelerStateFilter.of(state), pageable, includeStats))
 
     override fun createModelerApp(createModelerAppRequest: CreateModelerAppRequest): ResponseEntity<ModelerApp> =
         ResponseEntity.status(HttpStatus.CREATED).body(modelerAppService.create(createModelerAppRequest))
@@ -36,7 +38,7 @@ class ModelerAppController(
     override fun getModelerApp(
         key: String,
         includeStats: Boolean,
-    ): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppService.get(key))
+    ): ResponseEntity<ModelerApp> = ResponseEntity.ok(modelerAppStatsService.get(key, includeStats))
 
     override fun updateModelerApp(
         key: String,

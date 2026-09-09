@@ -86,6 +86,7 @@ abstract class BaseKeycloakIT {
             registry.add("spring.datasource.username", postgres::getUsername)
             registry.add("spring.datasource.password", postgres::getPassword)
 
+            registry.add("briany.security.auth.strategy") { "jwks" }
             registry.add("briany.security.auth.jwks.issuer-uri") { keycloakIssuerUri() }
             registry.add("briany.security.auth.jwks.jwk-set-uri") { keycloakJwkSetUri() }
         }

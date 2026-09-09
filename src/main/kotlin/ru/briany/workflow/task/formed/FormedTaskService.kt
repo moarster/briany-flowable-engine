@@ -2,13 +2,16 @@ package ru.briany.workflow.task.formed
 
 import org.flowable.engine.HistoryService
 import org.flowable.engine.TaskService
+import org.flowable.idm.api.IdmIdentityService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import ru.briany.common.api.ApiProblemException
 import ru.briany.domain.form.FormResponse
 import ru.briany.domain.form.FormService
 import ru.briany.generated.model.FormedTask
 import ru.briany.generated.model.Task
+import ru.briany.generated.model.User
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
 
@@ -18,6 +21,7 @@ class FormedTaskService(
     private val historyService: HistoryService,
     private val formService: FormService,
     private val objectMapper: ObjectMapper,
+    private val idmIdentityService: IdmIdentityService,
 ) {
     // Not the cleanest way to merge runtime and historic tasks, but it handles both uniformly.
     fun getFormedTask(taskId: String): FormedTask {
@@ -37,7 +41,7 @@ class FormedTaskService(
                             id = runtime.id,
                             name = runtime.name,
                             description = runtime.description,
-                            assignee = runtime.assignee,
+                            assignee = resolveUser(runtime.assignee),
                             processInstanceId = runtime.processInstanceId,
                             taskDefinitionKey = runtime.taskDefinitionKey,
                             formKey = runtime.formKey,
@@ -63,7 +67,7 @@ class FormedTaskService(
                             id = historic.id,
                             name = historic.name,
                             description = historic.description,
-                            assignee = historic.assignee,
+                            assignee = resolveUser(historic.assignee),
                             processInstanceId = historic.processInstanceId,
                             taskDefinitionKey = historic.taskDefinitionKey,
                             formKey = historic.formKey,
@@ -80,7 +84,12 @@ class FormedTaskService(
 
         val taskDto = taskInfo.dto
         val formKey =
-            checkNotNull(taskDto.formKey) { "Task '$taskId' has no formKey assigned" }
+            taskDto.formKey
+                ?: throw ApiProblemException(
+                    status = HttpStatus.NOT_FOUND,
+                    detail = "Task '$taskId' has no form",
+                    code = "TASK_HAS_NO_FORM",
+                )
 
         val form = formService.getFormByDeploymentWithFallback(taskInfo.processDefinitionId, formKey)
 
@@ -110,5 +119,17 @@ class FormedTaskService(
                     .associate { it.variableName to it.value }
             }
         return resolved.mapValues { (_, v) -> objectMapper.valueToTree(v) }
+    }
+
+    private fun resolveUser(userId: String): User {
+        val fUser =
+            idmIdentityService
+                .createUserQuery()
+                .userId(userId)
+                .singleResult()
+        return User(
+            id = fUser.id,
+            displayName = fUser.displayName,
+        )
     }
 }

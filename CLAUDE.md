@@ -12,20 +12,31 @@ writing about, on a neutral, domain-agnostic demo domain.
 ## What the codebase demonstrates (the three article themes)
 
 1. **Contour architecture** - Ports & Adapters / Anti-Corruption Layer reframed for an
-   *embedded* process engine. Contour 1 = engine-coupled adapter (`engine/api`,
-   `engine/query`), contour 2 = application/orchestration (`workflow/`), contour 3 =
-   fully-owned domain (`domain/`). Honest twist: standalone features (`designer/`) that
-   deliberately do NOT fit the three contours.
-2. **Low-code on headless Flowable 8** - compensating for the removed v8 UI: the
-   build-time descriptor pipeline + palette (`designer/`, `bpmn-descriptors/`),
-   declarative forms with FEEL variable binding (`domain/form/`), and the KV-store
-   (`domain/kv/`) as a proof-of-concept for the "any capability -> descriptor -> palette
-   element without a backend release" conveyor. One bpmn-js demo frontend.
-3. **Security of an embedded engine as a plugin system with a threat model** - defense
-   in depth across engine layers: JUEL sandbox escape (`bpmn/security/SafeBeanELResolver`),
-   deploy-time activity whitelist (`engine/config/behavior/CustomActivityBehaviorFactory`
-   + `DisabledActivityBehavior`), BPMN deployment validation (`engine/config/validator/`),
-   delegate allowlist (`SafeBpmnDeploymentValidator.ALLOWED_DELEGATE_BEANS`).
+   *embedded* process engine. Contour 1 = engine-coupled code (`engine/api` REST adapters,
+   `engine/config` engine wiring + deploy validators, and the runtime EL extensions in
+   `bpmn/`); contour 2 = application/orchestration (`workflow/`: applications, tasks, and the
+   platform capabilities/palette endpoints); contour 3 = fully-owned domain (`domain/`: forms,
+   modeler). Honest twist: `domain/modeler` deliberately reaches into contour 2 (it drives
+   `workflow` deployment), and `security/`, `common/`, `config/`, `utils/` are cross-cutting
+   infrastructure outside the contour model.
+2. **Low-code on headless Flowable 8** - compensating for the removed v8 UI: the runtime
+   platform endpoints (`workflow/PlatformController`) that publish the custom palette
+   (`getBpmnPalette`, deserializing `BpmnElementDescriptor` descriptors found on the classpath
+   - empty until descriptors are added) and the engine's self-description
+   (`getEngineCapabilities`, so a client offers only what deploy validation will accept);
+   declarative forms with FEEL variable binding (`domain/form/`); and the modeler workspace
+   (`domain/modeler/`) that bundles and deploys BPMN/DMN/BFORM to the engine. One bpmn-js demo
+   frontend (`briany-ui`).
+3. **Security of an embedded engine as a plugin system with a threat model** - defense in
+   depth across engine layers: JUEL sandbox escape (`bpmn/security/SafeBeanELResolver`); script
+   and shell tasks prohibited **unconditionally**, both at deploy time
+   (`engine/config/validator/ShellTaskValidator` and `SafeBpmnDeploymentValidator.rejectScriptTask`)
+   and at runtime (`engine/config/behavior/CustomActivityBehaviorFactory` returning
+   `DisabledActivityBehavior` / `DisabledScriptTaskBehavior`); an activity-type whitelist
+   (`briany.engine.whitelist.*`), a `flowable:class` prefix allowlist and a `delegateExpression`
+   bean allowlist (`SafeBpmnDeploymentValidator.ALLOWED_CLASS_PREFIXES` / `ALLOWED_DELEGATE_BEANS`).
+   `getEngineCapabilities` surfaces exactly these constraints to clients and never advertises a
+   script or shell capability.
 
 The API-first contract and the Testcontainers integration-test platform are strong but
 NOT Flowable-specific; they are background infrastructure here.
@@ -41,10 +52,12 @@ Flowable 8 and Spring Boot 4 are both new - verify bleeding-edge APIs, don't ass
 
 - `src/main/kotlin/ru/briany/` - application code, organised by contour (see themes above).
 - `article/index.ru.md` - the article series (Russian).
-- `contract/rest` - the OpenAPI contract: `openapi-v1.yaml` (source of truth for codegen) plus
-  `components/schemas/*.yaml` (BPMN palette schemas consumed by the descriptor task).
-- `bpmn-descriptors/` - JSON descriptors + the `BpmnElementDescriptor` schema feeding
-  the palette (theme 2).
+- `contract/` - the OpenAPI contract as a git submodule. `contract/rest/openapi-v1.yaml` is the
+  source of truth for codegen; `contract/rest/components/schemas/*.yaml` holds the
+  `BpmnElementDescriptor` / `InputUiComponent` palette schemas.
+- Palette descriptors: `getBpmnPalette` serves descriptor JSON matching
+  `briany.bpmn.palette.descriptors-location` (default `classpath*:/bpmn-descriptors/*.json`).
+  None ship yet, so the palette is empty by default (a valid response).
 - `docker-compose.yml` - postgres + app, auth strategy `flowable` (HTTP Basic vs engine IDM).
 - `docker-compose.jwks.yml` - override adding Keycloak + the `jwks` auth strategy;
   realm import lives in `keycloak/bpm-realm.json`.
@@ -59,6 +72,11 @@ Each strategy is a `@ConditionalOnProperty` bean in `security/`:
 - `jwks` (`JwksStrategy`) - Bearer tokens validated against a JWKS issuer (Keycloak in
   the demo). Config under `briany.security.auth.jwks.*`.
 
+CORS for the `/api/**` chain is off by default and opt-in via `briany.security.cors.*`:
+`allowed-origins` (empty = same-origin only), `allowed-methods`, `allowed-headers`. When
+`allowed-origins` is non-empty the chain registers a `/api/**` mapping with credentials
+enabled (using `allowedOriginPatterns`, so wildcards stay valid).
+
 ## API contract (`contract/rest/openapi-v1.yaml`)
 
 Source of truth for the REST API. `openApiGenerate` (kotlin-spring, `interfaceOnly`)
@@ -69,6 +87,18 @@ Descriptions are in English; anchor every description in official docs, don't in
   (e.g. `Applications`) is filtered out via `globalProperties.apis`.
 - **Vendor extensions:** `x-spring-paginated` (built-in,
   generates `Pageable`). Document any new extension here.
+- **Implemented tags:** `Application`, `ProcessDefinition`, `ProcessInstance`, `Task`,
+  `Identity` (`GET /me`, in `security/UserController`), `Platform`
+  (`engine-capabilities` + `bpmn-palette`, in `workflow/PlatformController`), `Form`,
+  `ModelerApp`. Every contract `operationId` has a controller override.
+- **Opt-in stats:** `listProcesses` / `getProcess` / `listModelerApps` / `getModelerApp`
+  take `?includeStats=true` and fill the `stats` projection. Instance counts come from the
+  shared `engine/api/ProcessInstanceStatsAggregator` (per key / sum over keys);
+  `domain/modeler/ModelerAppStatsService` adds file composition. Default listings stay cheap.
+- **Typed failures:** `common/api/ApiProblemException` renders the contract `Problem` with a
+  stable `code` and structured `errors[]` (via `GlobalExceptionHandler`). Deploy validation
+  failures map each engine error to `errors[].field = "<fileKey>#<elementId>"`; a formless task
+  answers `404` with `code = TASK_HAS_NO_FORM`.
 
 ## Conventions
 

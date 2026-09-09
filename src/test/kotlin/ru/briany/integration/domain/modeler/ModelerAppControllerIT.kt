@@ -3,6 +3,7 @@ package ru.briany.integration.domain.modeler
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpMethod
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.test.web.servlet.ResultActions
@@ -78,6 +79,18 @@ class ModelerAppControllerIT : BaseOrderedControllerIT() {
     }
 
     @Test
+    @Order(15)
+    fun `draft app stats carry composition but no instances`() {
+        mockMvc
+            .perform(get("$BASE/$APP_KEY").param("includeStats", "true"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.processDefinitions").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.decisions").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.forms").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.instances").doesNotExist())
+    }
+
+    @Test
     @Order(11)
     fun `multi-process file is rejected with 400`() {
         upload("multi-process.bpmn").andExpect(MockMvcResultMatchers.status().isBadRequest)
@@ -111,7 +124,7 @@ class ModelerAppControllerIT : BaseOrderedControllerIT() {
         mockMvc
             .perform(
                 MockMvcRequestBuilders
-                    .multipart(MockMvcRequestBuilders.put("$BASE/$APP_KEY/files/$PROCESS_KEY"))
+                    .multipart(HttpMethod.PUT, "$BASE/$APP_KEY/files/$PROCESS_KEY")
                     .file(multipart("process-a-v2.bpmn"))
                     .with(SecurityMockMvcRequestPostProcessors.user(TEST_USER)),
             ).andExpect(MockMvcResultMatchers.status().isOk)
@@ -133,6 +146,37 @@ class ModelerAppControllerIT : BaseOrderedControllerIT() {
             ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.state").value("synced"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.deployedVersion").value(2))
+    }
+
+    @Test
+    @Order(45)
+    fun `deployed app stats include summed instance counts`() {
+        runtimeService.startProcessInstanceByKey(PROCESS_KEY)
+
+        mockMvc
+            .perform(get("$BASE/$APP_KEY").param("includeStats", "true"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.processDefinitions").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.decisions").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.forms").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.instances.total").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats.instances.running").value(1))
+
+        mockMvc
+            .perform(get("$BASE/$APP_KEY"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.stats").doesNotExist())
+
+        mockMvc
+            .perform(get(BASE).param("includeStats", "true"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].stats.processDefinitions").value(1))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].stats.instances.total").value(1))
+
+        mockMvc
+            .perform(get(BASE))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].stats").doesNotExist())
     }
 
     @Test

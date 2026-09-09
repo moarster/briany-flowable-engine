@@ -3,6 +3,7 @@ package ru.briany.workflow.task.formed
 import org.flowable.engine.HistoryService
 import org.flowable.engine.RepositoryService
 import org.flowable.engine.repository.ProcessDefinition
+import org.flowable.idm.api.IdmIdentityService
 import org.flowable.task.api.TaskInfo
 import org.flowable.task.api.TaskInfoQuery
 import org.flowable.task.api.history.HistoricTaskInstance
@@ -16,6 +17,7 @@ import ru.briany.common.api.dtos.PagedList
 import ru.briany.generated.model.Task
 import ru.briany.generated.model.TaskAssignmentFilter
 import ru.briany.generated.model.TaskPage
+import ru.briany.generated.model.User
 import java.time.Instant
 import java.util.Date
 import org.flowable.engine.TaskService as FlowableTaskService
@@ -33,6 +35,7 @@ class TaskService(
     private val taskService: FlowableTaskService,
     private val historyService: HistoryService,
     private val repositoryService: RepositoryService,
+    private val idmIdentityService: IdmIdentityService,
 ) {
     @Suppress("LongParameterList")
     fun listTasks(
@@ -202,11 +205,23 @@ class TaskService(
         val definitions = resolveDefinitions(tasks.mapNotNull { it.processDefinitionId }.toSet())
         val businessKeys = resolveBusinessKeys(tasks.mapNotNull { it.processInstanceId }.toSet())
         val state = if (completed) STATE_COMPLETED else STATE_ACTIVE
+        val idmUsers =
+            idmIdentityService
+                .createUserQuery()
+                .userIds(
+                    tasks
+                        .mapNotNull { it.assignee }
+                        .toSet()
+                        .toList(),
+                ).list()
+                .map { User(id = it.id, displayName = it.displayName) }
+                .associateBy { it.id }
 
         return tasks.map { task ->
             val definition = task.processDefinitionId?.let { definitions[it] }
             TaskMapper.toDto(
                 task = task,
+                assigneeUser = idmUsers[task.assignee],
                 state = state,
                 endedAt = (task as? HistoricTaskInstance)?.endTime?.toInstant(),
                 processDefinitionKey = definition?.key,

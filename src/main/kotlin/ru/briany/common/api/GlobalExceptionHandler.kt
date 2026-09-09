@@ -3,6 +3,7 @@ package ru.briany.common.api
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -39,5 +40,18 @@ class GlobalExceptionHandler {
     fun handleUnreadable(ex: HttpMessageNotReadableException): Problem {
         log.warn("Malformed request body: {}", ex.message)
         return Problem("Invalid request format")
+    }
+
+    @ExceptionHandler(ApiProblemException::class)
+    fun handleApiProblem(ex: ApiProblemException): ResponseEntity<Problem> {
+        log.warn("API problem [{}]: {}", ex.code ?: ex.status.value(), ex.detail)
+        return ResponseEntity.status(ex.status).body(
+            Problem(
+                detail = ex.detail,
+                status = ex.status.value(),
+                code = ex.code,
+                errors = ex.errors.ifEmpty { null },
+            ),
+        )
     }
 }
